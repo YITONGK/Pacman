@@ -6,7 +6,7 @@ import src.utility.PropertiesLoader;
 import java.util.Properties;
 
 public class Driver {
-    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test1.properties";
+    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test3.properties";
 
     /**
      * Starting point
@@ -18,8 +18,6 @@ public class Driver {
         if (args.length > 0) {
             propertiesPath = args[0];
         }
-        final Properties properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
-        GameCallback gameCallback = new GameCallback();
-        new Game(gameCallback, properties);
+        new GameEngine(propertiesPath);
     }
 }

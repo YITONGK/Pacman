@@ -8,54 +8,39 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
-public class PacActor extends Actor implements GGKeyRepeatListener
-{
-  private static final int nbSprites = 4;
+public class PacActor extends MovableActor implements GGKeyRepeatListener {
   private int idSprite = 0;
   private int nbPills = 0;
   private int score = 0;
-  private Game game;
-  private ArrayList<Location> visitedList = new ArrayList<Location>();
   private List<String> propertyMoves = new ArrayList<>();
   private int propertyMoveIndex = 0;
-  private final int listLength = 10;
-  private int seed;
-  private Random randomiser = new Random();
-  public PacActor(Game game)
-  {
-    super(true, "sprites/pacpix.gif", nbSprites);  // Rotatable
-    this.game = game;
-  }
   private boolean isAuto = false;
 
-  public void setAuto(boolean auto) {
-    isAuto = auto;
+  public PacActor(Game game) {
+    super(game);
   }
 
-
-  public void setSeed(int seed) {
-    this.seed = seed;
-    randomiser.setSeed(seed);
-  }
-
-  public void setPropertyMoves(String propertyMoveString) {
-    if (propertyMoveString != null) {
-      this.propertyMoves = Arrays.asList(propertyMoveString.split(","));
+  public void act() {
+    show(idSprite);
+    idSprite++;
+    if (idSprite == nbSprites)
+      idSprite = 0;
+    if (isAuto) {
+      moveInAutoMode();
     }
+    this.game.getGameCallback().pacManLocationChanged(getLocation(), score, nbPills);
   }
 
-  public void keyRepeated(int keyCode)
-  {
+  // this method is used for user keyboard input to control pacman when pacman is not in auto mode
+  public void keyRepeated(int keyCode) {
     if (isAuto) {
       return;
     }
     if (isRemoved())  // Already removed
       return;
     Location next = null;
-    switch (keyCode)
-    {
+    switch (keyCode) {
       case KeyEvent.VK_LEFT:
         next = getLocation().getNeighbourLocation(Location.WEST);
         setDirection(Location.WEST);
@@ -80,62 +65,15 @@ public class PacActor extends Actor implements GGKeyRepeatListener
     }
   }
 
-  public void act()
-  {
-    show(idSprite);
-    idSprite++;
-    if (idSprite == nbSprites)
-      idSprite = 0;
-
-    if (isAuto) {
-      moveInAutoMode();
-    }
-    this.game.getGameCallback().pacManLocationChanged(getLocation(), score, nbPills);
-  }
-
-  private Location closestPillLocation() {
-    int currentDistance = 1000;
-    Location currentLocation = null;
-    List<Location> pillAndItemLocations = game.getPillAndItemLocations();
-    for (Location location: pillAndItemLocations) {
-      int distanceToPill = location.getDistanceTo(getLocation());
-      if (distanceToPill < currentDistance) {
-        currentLocation = location;
-        currentDistance = distanceToPill;
-      }
-    }
-
-    return currentLocation;
-  }
-
-  private void followPropertyMoves() {
-    String currentMove = propertyMoves.get(propertyMoveIndex);
-    switch(currentMove) {
-      case "R":
-        turn(90);
-        break;
-      case "L":
-        turn(-90);
-        break;
-      case "M":
-        Location next = getNextMoveLocation();
-        if (canMove(next)) {
-          setLocation(next);
-          eatPill(next);
-        }
-        break;
-    }
-    propertyMoveIndex++;
-  }
-
   private void moveInAutoMode() {
+    // pacman will initially move following the commands
     if (propertyMoves.size() > propertyMoveIndex) {
       followPropertyMoves();
       return;
     }
+    // after finishing all the move commands, pacman will automatically choose next location due to the closest pill
     Location closestPill = closestPillLocation();
     double oldDirection = getDirection();
-
     Location.CompassDirection compassDir =
             getLocation().get4CompassDirectionTo(closestPill);
     Location next = getLocation().getNeighbourLocation(compassDir);
@@ -175,58 +113,86 @@ public class PacActor extends Actor implements GGKeyRepeatListener
     addVisitedList(next);
   }
 
-  private void addVisitedList(Location location)
-  {
-    visitedList.add(location);
-    if (visitedList.size() == listLength)
-      visitedList.remove(0);
+  // this method is used to choose the location which is closest to a remaining item
+  // will be used in auto move mode, to help pacman automatically choose next step
+  private Location closestPillLocation() {
+    int currentDistance = 1000;
+    Location currentLocation = null;
+    int distanceToItem;
+    List<Item> items = new ArrayList<>();
+    items.addAll(game.getPills());
+    items.addAll(game.getGoldPieces());
+    items.addAll(game.getIceCubes());
+    for (Item item: items) {
+      distanceToItem = item.getLocation().getDistanceTo(getLocation());
+      if (distanceToItem < currentDistance) {
+        currentLocation = item.getLocation();
+        currentDistance = distanceToItem;
+      }
+    }
+    return currentLocation;
   }
 
-  private boolean isVisited(Location location)
-  {
-    for (Location loc : visitedList)
-      if (loc.equals(location))
-        return true;
-    return false;
+  public void setAuto(boolean auto) {
+    isAuto = auto;
   }
 
-  private boolean canMove(Location location)
-  {
+  public void setPropertyMoves(String propertyMoveString) {
+    if (propertyMoveString != null) {
+      this.propertyMoves = Arrays.asList(propertyMoveString.split(","));
+    }
+  }
+
+  private void followPropertyMoves() {
+    String currentMove = propertyMoves.get(propertyMoveIndex);
+    // "R" and "L" command for pacman to change facing direction, "M" command for pacman to move
+    switch (currentMove) {
+      case "R":
+        turn(90);
+        break;
+      case "L":
+        turn(-90);
+        break;
+      case "M":
+        Location next = getNextMoveLocation();
+        if (canMove(next)) {
+          setLocation(next);
+          eatPill(next);
+        }
+        break;
+    }
+    propertyMoveIndex++;
+  }
+
+  // check whether the current location pacman stands in has an item, if so, different items have different effects
+  private void eatPill(Location location) {
     Color c = getBackground().getColor(location);
-    if ( c.equals(Color.gray) || location.getX() >= game.getNumHorzCells()
-            || location.getX() < 0 || location.getY() >= game.getNumVertCells() || location.getY() < 0)
-      return false;
-    else
-      return true;
+    // If pill was eaten
+    if (c.equals(Color.white)) {
+      nbPills++;
+      score += ItemType.PILL.getScore();
+      getBackground().fillCell(location, Color.lightGray);
+      game.getGameCallback().pacManEatPillsAndItems(location, "pills");
+    }
+    // If gold piece was eaten
+    else if (c.equals(Color.yellow)) {
+      nbPills++;
+      score += ItemType.GOLD_PIECE.getScore();
+      getBackground().fillCell(location, Color.lightGray);
+      game.getGameCallback().pacManEatPillsAndItems(location, "gold");
+      game.removeItem(ItemType.GOLD_PIECE,location);
+    }
+    // If ice cube was eaten
+    else if (c.equals(Color.blue)) {
+      getBackground().fillCell(location, Color.lightGray);
+      game.getGameCallback().pacManEatPillsAndItems(location, "ice");
+      game.removeItem(ItemType.ICE_CUBE,location);
+    }
+    String title = "[PacMan in the Torusverse] Current score: " + score;
+    gameGrid.setTitle(title);
   }
 
   public int getNbPills() {
     return nbPills;
   }
-
-  private void eatPill(Location location)
-  {
-    Color c = getBackground().getColor(location);
-    if (c.equals(Color.white))
-    {
-      nbPills++;
-      score++;
-      getBackground().fillCell(location, Color.lightGray);
-      game.getGameCallback().pacManEatPillsAndItems(location, "pills");
-    } else if (c.equals(Color.yellow)) {
-      nbPills++;
-      score+= 5;
-      getBackground().fillCell(location, Color.lightGray);
-      game.getGameCallback().pacManEatPillsAndItems(location, "gold");
-      game.removeItem("gold",location);
-    } else if (c.equals(Color.blue)) {
-      getBackground().fillCell(location, Color.lightGray);
-      game.getGameCallback().pacManEatPillsAndItems(location, "ice");
-      game.removeItem("ice",location);
-    }
-    String title = "[PacMan in the Multiverse] Current score: " + score;
-    gameGrid.setTitle(title);
-  }
-
-
 }
