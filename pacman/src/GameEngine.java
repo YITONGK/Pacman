@@ -43,6 +43,7 @@ public class GameEngine extends GameGrid {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
+        // TODO: changed grid from PacManGameGrid to Grid
         grid = controller.loadFile();
         seed = Integer.parseInt(properties.getProperty("seed"));
         mode = properties.getProperty("version");
@@ -92,6 +93,7 @@ public class GameEngine extends GameGrid {
         }
     }
 
+    // TODO: using map to set up actor locations instead of property file
     private void setupActorLocations() {
         Location location;
         Location pacLocation = null;
@@ -119,6 +121,7 @@ public class GameEngine extends GameGrid {
     }
 
 
+    // TODO: use map to set up pill and items locations instead of property file
     private void setupPillAndItemsLocations() {
         Item item;
         Location location;
@@ -182,6 +185,7 @@ public class GameEngine extends GameGrid {
                 bg.setPaintColor(Color.white);
                 location = new Location(x, y);
                 cellValue = grid.getTile(x, y);
+                // TODO: changed value
                 if (cellValue != 'b') {
                     bg.fillCell(location, Color.lightGray);
                 }

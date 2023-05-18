@@ -17,6 +17,7 @@ public class Driver {
      */
 
     public static void main(String args[]) {
+        // TODO: added game path to load maps, added controller
         Controller controller = new Controller();
         String gmapPath = GMAP_PATH;
         String propertiesPath = DEFAULT_PROPERTIES_PATH;

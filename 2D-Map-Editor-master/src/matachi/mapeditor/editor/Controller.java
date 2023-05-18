@@ -197,6 +197,7 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
+	// TODO: added return value (from void to Grid)
 	public Grid loadFile() {
 		SAXBuilder builder = new SAXBuilder();
 		try {
