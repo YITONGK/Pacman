@@ -1,12 +1,15 @@
 package src;
 
+import matachi.mapeditor.editor.Controller;
 import src.utility.GameCallback;
 import src.utility.PropertiesLoader;
 
 import java.util.Properties;
 
 public class Driver {
-    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test3.properties";
+    public static final String GMAP_PATH = "GameFolder/";
+    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test1.properties";
+
 
     /**
      * Starting point
@@ -14,10 +17,12 @@ public class Driver {
      */
 
     public static void main(String args[]) {
+        Controller controller = new Controller();
+        String gmapPath = GMAP_PATH;
         String propertiesPath = DEFAULT_PROPERTIES_PATH;
         if (args.length > 0) {
-            propertiesPath = args[0];
+            gmapPath = args[0];
         }
-        new GameEngine(propertiesPath);
+        new GameEngine(propertiesPath, gmapPath, controller);
     }
 }

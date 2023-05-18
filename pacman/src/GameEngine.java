@@ -3,6 +3,9 @@
 package src;
 
 import ch.aplu.jgamegrid.*;
+import matachi.mapeditor.editor.Controller;
+import matachi.mapeditor.grid.Grid;
+import matachi.mapeditor.grid.GridView;
 import src.utility.GameCallback;
 import java.awt.*;
 import java.util.ArrayList;
@@ -25,11 +28,10 @@ public class GameEngine extends GameGrid {
     private String mode;
 
     private Game game;
-    protected PacManGameGrid grid;
     protected PacActor pacActor;
     private Monster troll;
     private Monster tx5;
-
+    private Grid grid;
     private ArrayList<Monster> monsters;
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
@@ -37,13 +39,13 @@ public class GameEngine extends GameGrid {
     private Properties properties;
     private final int SPEED_DOWN = 3;
 
-    public GameEngine(String propertiesPath) {
+    public GameEngine(String propertiesPath, String mapPath, Controller controller) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
+        grid = controller.loadFile();
         seed = Integer.parseInt(properties.getProperty("seed"));
         mode = properties.getProperty("version");
-        grid = new PacManGameGrid(nbHorzCells, nbVertCells);
         setSimulationPeriod(SIMULATION_PERIOD);
         setTitle(TITLE);
 
@@ -59,10 +61,8 @@ public class GameEngine extends GameGrid {
         monsters = new ArrayList<>();
         troll = new Troll(game);
         tx5 = new TX5(game);
-        // Set up monster
         monsters.add(troll);
         monsters.add(tx5);
-
         setupMonsterAttributes();
         setupActorLocations();
         game.addPacMan(pacActor);
@@ -76,7 +76,6 @@ public class GameEngine extends GameGrid {
 
     private void setupPacActorAttributes() {
         //Setup for auto test
-        pacActor.setPropertyMoves(properties.getProperty("PacMan.move"));
         pacActor.setAuto(Boolean.parseBoolean(properties.getProperty("PacMan.isAuto")));
         //Setup Random seeds
         pacActor.setSeed(seed);
@@ -94,69 +93,48 @@ public class GameEngine extends GameGrid {
     }
 
     private void setupActorLocations() {
-        String[] pacManLocations = this.properties.getProperty("PacMan.location").split(",");
-        int pacManX = Integer.parseInt(pacManLocations[0]);
-        int pacManY = Integer.parseInt(pacManLocations[1]);
-        // loop the monsters ArrayList to add each monster
-        for (Monster monster: monsters){
-            String[] monsterLocations = this.properties.getProperty(monster.getType().name() + ".location").split(",");
-            int monsterX = Integer.parseInt(monsterLocations[0]);
-            int monsterY = Integer.parseInt(monsterLocations[1]);
-            addActor(monster, new Location(monsterX, monsterY), Location.NORTH);
+        Location location;
+        Location pacLocation = null;
+        Location trollLocation = null;
+        Location tx5Location = null;
+
+        for (int y = 0; y < nbVertCells; y++) {
+            for (int x = 0; x < nbHorzCells; x++) {
+                location = new Location(x, y);
+                char a = grid.getTile(x, y);
+                if (a == 'f') {
+                    pacLocation = location;
+                }
+                if (a == 'g') {
+                    trollLocation = location;
+                }
+                if (a == 'h') {
+                    tx5Location = location;
+                }
+            }
         }
-        addActor(pacActor, new Location(pacManX, pacManY));
+        addActor(troll, trollLocation, Location.NORTH);
+        addActor(tx5, tx5Location, Location.NORTH);
+        addActor(pacActor, pacLocation);
     }
 
 
     private void setupPillAndItemsLocations() {
-        boolean noPropertyPills = false;
-        boolean noPropertyGold = false;
         Item item;
         Location location;
-
-        String pillsLocationString = properties.getProperty("Pills.location");
-        if (pillsLocationString != null) {
-            String[] singlePillLocationStrings = pillsLocationString.split(";");
-            for (String singlePillLocationString: singlePillLocationStrings) {
-                String[] locationStrings = singlePillLocationString.split(",");
-                location = new Location(Integer.parseInt(locationStrings[0]),
-                        Integer.parseInt(locationStrings[1]));
-                item = new Item(location);
-                pills.add(item);
-            }
-        }
-        String goldLocationString = properties.getProperty("Gold.location");
-        if (goldLocationString != null) {
-            String[] singleGoldLocationStrings = goldLocationString.split(";");
-            for (String singleGoldLocationString: singleGoldLocationStrings) {
-                String[] locationStrings = singleGoldLocationString.split(",");
-                location = new Location(Integer.parseInt(locationStrings[0]), Integer.parseInt(locationStrings[1]));
-                item = new Item(ItemType.GOLD_PIECE.getImage(), location);
-                goldPieces.add(item);
-                addActor(item, location);
-            }
-        }
-        // If no pills/gold pieces were read from property file, read presets from Grid instead
-        if (pills.size() == 0){
-            noPropertyPills = true;
-        }
-        if (goldPieces.size() == 0){
-            noPropertyGold = true;
-        }
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
                 location = new Location(x, y);
-                int a = grid.getCell(location);
-                if (a == 1 && noPropertyPills) {
+                char a = grid.getTile(x, y);
+                if (a == 'c') {
                     pills.add(new Item(location));
                 }
-                if (a == 3 && noPropertyGold) {
+                if (a == 'd') {
                     item = new Item(ItemType.GOLD_PIECE.getImage(), location);
                     goldPieces.add(item);
                     addActor(item, location);
                 }
-                // Ice is only contained from preset Grid
-                if (a == 4) {
+                if (a == 'e') {
                     item = new Item(ItemType.ICE_CUBE.getImage(), location);
                     iceCubes.add(item);
                     addActor(item, location);
@@ -203,8 +181,8 @@ public class GameEngine extends GameGrid {
             for (int x = 0; x < nbHorzCells; x++) {
                 bg.setPaintColor(Color.white);
                 location = new Location(x, y);
-                cellValue = grid.getCell(location);
-                if (cellValue > 0) {
+                cellValue = grid.getTile(x, y);
+                if (cellValue != 'b') {
                     bg.fillCell(location, Color.lightGray);
                 }
             }

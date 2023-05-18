@@ -17,6 +17,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ch.aplu.jgamegrid.GameGrid;
 import matachi.mapeditor.grid.Camera;
 import matachi.mapeditor.grid.Grid;
 import matachi.mapeditor.grid.GridCamera;
@@ -29,6 +30,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
+import src.GameEngine;
 
 /**
  * Controller of the application.
@@ -93,9 +95,11 @@ public class Controller implements ActionListener, GUIInformation {
 		} else if (e.getActionCommand().equals("save")) {
 			saveFile();
 		} else if (e.getActionCommand().equals("load")) {
+			System.out.println("laodlaood");
 			loadFile();
 		} else if (e.getActionCommand().equals("update")) {
 			updateGrid(gridWith, gridHeight);
+		} else if (e.getActionCommand().equals("start_game")) {
 		}
 	}
 
@@ -193,7 +197,7 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-	public void loadFile() {
+	public Grid loadFile() {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			JFileChooser chooser = new JFileChooser();
@@ -260,7 +264,6 @@ public class Controller implements ActionListener, GUIInformation {
 							model.setTile(x, y, tileNr);
 						}
 					}
-
 					String mapString = model.getMapAsString();
 					grid.redrawGrid();
 				}
@@ -268,6 +271,7 @@ public class Controller implements ActionListener, GUIInformation {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return model;
 	}
 
 	/**
