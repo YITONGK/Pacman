@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Properties;
 import src.utility.PropertiesLoader;
 
+import javax.sound.sampled.Port;
+
 /**
  * GameEngine reads the property file, initialises the game, and runs the game.
  */
@@ -36,6 +38,12 @@ public class GameEngine extends GameGrid {
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
     private ArrayList<Item> iceCubes;
+    // TODO: Added portal instances (can also instantiate in own class - I may change this code in the future)
+    private PortalPair whitePortals;
+    private PortalPair yellowPortals;
+    private PortalPair darkGoldPortals;
+    private PortalPair darkGrayPortals;
+
     private Properties properties;
     private final int SPEED_DOWN = 3;
 
@@ -55,6 +63,10 @@ public class GameEngine extends GameGrid {
         pills = new ArrayList<>();
         goldPieces = new ArrayList<>();
         iceCubes = new ArrayList<>();
+        whitePortals = new PortalPair();
+        yellowPortals = new PortalPair();
+        darkGoldPortals = new PortalPair();
+        darkGrayPortals = new PortalPair();
         setupPillAndItemsLocations();
         game.addItems(pills, goldPieces, iceCubes);
         pacActor = new PacActor(game);
@@ -140,6 +152,26 @@ public class GameEngine extends GameGrid {
                 if (a == 'e') {
                     item = new Item(ItemType.ICE_CUBE.getImage(), location);
                     iceCubes.add(item);
+                    addActor(item, location);
+                }
+                if (a == 'i'){
+                    item = new Item(ItemType.WHITE_PORTAL.getImage(), location);
+                    whitePortals.addPortal(item);
+                    addActor(item, location);
+                }
+                if (a == 'j'){
+                    item = new Item(ItemType.YELLOW_PORTAL.getImage(), location);
+                    yellowPortals.addPortal(item);
+                    addActor(item, location);
+                }
+                if (a == 'k'){
+                    item = new Item(ItemType.DARK_GOLD_PORTAL.getImage(), location);
+                    darkGoldPortals.addPortal(item);
+                    addActor(item, location);
+                }
+                if (a == 'l'){
+                    item = new Item(ItemType.DARK_GRAY_PORTAL.getImage(), location);
+                    darkGrayPortals.addPortal(item);
                     addActor(item, location);
                 }
             }
