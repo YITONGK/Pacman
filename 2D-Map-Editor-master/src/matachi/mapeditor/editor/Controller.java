@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import javax.sound.sampled.Port;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -31,6 +32,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import src.GameEngine;
+import src.PortalPair;
 
 /**
  * Controller of the application.
@@ -95,7 +97,7 @@ public class Controller implements ActionListener, GUIInformation {
 		} else if (e.getActionCommand().equals("save")) {
 			saveFile();
 		} else if (e.getActionCommand().equals("load")) {
-			System.out.println("laodlaood");
+//			System.out.println("laodlaood");
 			loadFile();
 		} else if (e.getActionCommand().equals("update")) {
 			updateGrid(gridWith, gridHeight);
@@ -282,4 +284,56 @@ public class Controller implements ActionListener, GUIInformation {
 	public Tile getSelectedTile() {
 		return selectedTile;
 	}
+
+
+	// TODO: Added Level Checking logic
+
+	public boolean levelChecker(){
+		int countPacMan = 0;
+		int countGold = 0, countPill = 0;
+		char tileChar;
+		PortalPair white = new PortalPair();
+		PortalPair yellow = new PortalPair();
+		PortalPair darkGold = new PortalPair();
+		PortalPair darkGray = new PortalPair();
+		for (int y = 0; y < model.getHeight(); y++){
+			for (int x = 0; x < model.getWidth(); x++){
+				tileChar = model.getTile(x, y);
+				if (tileChar == 'c'){
+					countPill++;
+				}
+				else if (tileChar == 'f'){
+					countPacMan++;
+				}
+				else if (tileChar == 'd'){
+					countGold++;
+				}
+				else if (tileChar == 'i'){
+					white.addPortal();
+				}
+				else if (tileChar == 'j'){
+					yellow.addPortal();
+				}
+				else if (tileChar == 'k'){
+					darkGold.addPortal();
+				}
+				else if (tileChar == 'l'){
+					darkGray.addPortal();
+				}
+			}
+		}
+		// MISSING: level checking (4d) logic
+		return countPacMan == 1 && countGold >= 2 && countPill >= 2 &&
+				checkPortalTypeIsValid(white, yellow, darkGold, darkGray);
+	}
+
+	/**
+	 * Function used in Level Checking to detect validity of current portal pair
+	 * @return
+	 */
+	private boolean checkPortalTypeIsValid(PortalPair white, PortalPair yellow, PortalPair darkGold, PortalPair darkGray) {
+		return white.checkPortalTypeIsValid() && yellow.checkPortalTypeIsValid() && darkGray.checkPortalTypeIsValid()
+				&& darkGold.checkPortalTypeIsValid();
+	}
 }
+

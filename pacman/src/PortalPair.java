@@ -10,6 +10,7 @@ public class PortalPair {
 
     private int countPortals;
     public final static int VALID_PAIR = 2;
+    public final static int EMPTY_PAIR = 0;
 
     public void addPortal(Item portal){
         // Only add portals if we have space
@@ -23,6 +24,13 @@ public class PortalPair {
     }
 
     /**
+     * Function used for initial level checking
+     */
+    public void addPortal(){
+        countPortals++;
+    }
+
+    /**
      * Function used in Level Checking to detect validity of current portal pair
      * @return
      */
@@ -31,10 +39,10 @@ public class PortalPair {
     }
 
     /**
-     * Function to check that we have the correct number of portals (i.e., 2) for each "type" of portal
+     * Function to check that we have either 0 or 2 portals, for each "type" of portal
      */
     private boolean checkPortalCount(){
-        return countPortals == VALID_PAIR;
+        return (countPortals == VALID_PAIR) || (countPortals == EMPTY_PAIR);
     }
 
     /**
