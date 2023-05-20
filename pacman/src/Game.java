@@ -4,7 +4,6 @@ package src;
 
 import ch.aplu.jgamegrid.*;
 import src.utility.GameCallback;
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -12,8 +11,6 @@ import java.util.ArrayList;
  * and updates the monsters' behaviors during the game.
  */
 public class Game {
-  private final int TIME_FROZEN = 3;
-  private final int TIME_FURIOUS = 3;
   private final String mode;
   private final int nbHorzCells;
   private final int nbVertCells;
@@ -24,6 +21,10 @@ public class Game {
   private ArrayList<Item> pills;
   private ArrayList<Item> goldPieces;
   private ArrayList<Item> iceCubes;
+  private PortalPair whitePortals;
+  private PortalPair yellowPortals;
+  private PortalPair darkGoldPortals;
+  private PortalPair darkGrayPortals;
   private GameCallback gameCallback;
 
   public Game(String mode, int nbHorzCells, int nbVertCells) {
@@ -61,13 +62,44 @@ public class Game {
     this.monsters = monsters;
   }
 
-  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces, ArrayList<Item> iceCubes) {
+  // TODO: Added portals to game
+  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces, ArrayList<Item> iceCubes,
+    PortalPair whitePortals, PortalPair yellowPortals, PortalPair darkGrayPortals, PortalPair darkGoldPortals) {
     this.pills = new ArrayList<>();
     this.pills.addAll(pills);
     this.goldPieces = new ArrayList<>();
     this.goldPieces.addAll(goldPieces);
     this.iceCubes = new ArrayList<>();
     this.iceCubes.addAll(iceCubes);
+    this.whitePortals = whitePortals;
+    this.yellowPortals = yellowPortals;
+    this.darkGoldPortals = darkGoldPortals;
+    this.darkGrayPortals = darkGrayPortals;
+  }
+
+  // TODO: Added portal-overlap-with-pacman logic
+  public Location movePacmanThroughPortal(){
+    Location moveTo;
+    if ((moveTo = whitePortals.movePacMan(pacActor)) != null){
+      return moveTo;
+    }
+    else if ((moveTo = yellowPortals.movePacMan(pacActor)) != null){
+      return moveTo;
+    }
+    else if ((moveTo = darkGrayPortals.movePacMan(pacActor)) != null){
+      return moveTo;
+    }
+    else if ((moveTo = darkGoldPortals.movePacMan(pacActor)) != null){
+      return moveTo;
+    }
+    return null;
+  }
+
+  public void resetPortal(){
+    yellowPortals.setMovedOntoPortal(pacActor);
+    whitePortals.setMovedOntoPortal(pacActor);
+    darkGrayPortals.setMovedOntoPortal(pacActor);
+    darkGoldPortals.setMovedOntoPortal(pacActor);
   }
 
   // Check if Pacman is hit by a monster

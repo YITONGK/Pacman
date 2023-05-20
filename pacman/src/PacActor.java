@@ -34,6 +34,8 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
 
   // this method is used for user keyboard input to control pacman when pacman is not in auto mode
   public void keyRepeated(int keyCode) {
+    Location pacNewLocation;
+
     if (isAuto) {
       return;
     }
@@ -62,6 +64,10 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     {
       setLocation(next);
       eatPill(next);
+      if ((pacNewLocation = game.movePacmanThroughPortal()) != null){
+        setLocation(pacNewLocation);
+      }
+      game.resetPortal();
     }
   }
 

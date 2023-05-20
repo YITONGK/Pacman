@@ -9,7 +9,7 @@ public class PortalPair {
     // Each portal is an Item
     private Item portal1;
     private Item portal2;
-    private int countPortals;
+    private int countPortals = 0;
     // Flag to check the nature of PacMan-Portal overlap
     // (i.e., did PacMan move onto Portal, or was PacMan transported onto Portal?)
     private boolean movedOntoPortal = true;
@@ -60,6 +60,9 @@ public class PortalPair {
      * Function to transport PacMan to the other portal
      */
     public Location movePacMan(PacActor pacActor){
+        if (countPortals == 0){
+            return null;
+        }
         // If PacMan overlapped with portal #1, move PacMan to portal #2
         if (portal1.getLocation().equals(pacActor.getLocation()) && movedOntoPortal){
             movedOntoPortal = false;
@@ -77,8 +80,9 @@ public class PortalPair {
      * Function to reset movedOntoPortal flag, so that PacMan can repeatedly travel via portals
      */
     public void setMovedOntoPortal(PacActor pacActor){
-        if (!(portal1.getLocation().equals(pacActor.getLocation()) &&
-                portal2.getLocation().equals(pacActor.getLocation()))){
+        if (portal1 != null && portal2 != null &&
+            !(portal1.getLocation().equals(pacActor.getLocation()) &&
+                    portal2.getLocation().equals(pacActor.getLocation()))){
             movedOntoPortal = true;
         }
     }

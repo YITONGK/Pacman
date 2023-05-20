@@ -68,7 +68,7 @@ public class GameEngine extends GameGrid {
         darkGoldPortals = new PortalPair();
         darkGrayPortals = new PortalPair();
         setupPillAndItemsLocations();
-        game.addItems(pills, goldPieces, iceCubes);
+        game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
         pacActor = new PacActor(game);
         setupPacActorAttributes();
         monsters = new ArrayList<>();
