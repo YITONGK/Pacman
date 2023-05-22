@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.sound.sampled.Port;
@@ -59,6 +61,9 @@ public class Controller implements ActionListener, GUIInformation {
 
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
+
+	// TODO: Added model array to store all models from folder
+	private ArrayList<Grid> fileModels = new ArrayList<>();
 
 	/**
 	 * Construct the controller.
@@ -204,6 +209,7 @@ public class Controller implements ActionListener, GUIInformation {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			JFileChooser chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			File selectedFile;
 			BufferedReader in;
 			FileReader reader = null;
@@ -214,67 +220,139 @@ public class Controller implements ActionListener, GUIInformation {
 			Document document;
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				selectedFile = chooser.getSelectedFile();
-				if (selectedFile.canRead() && selectedFile.exists()) {
-					document = (Document) builder.build(selectedFile);
-
-					Element rootNode = document.getRootElement();
-
-					List sizeList = rootNode.getChildren("size");
-					Element sizeElem = (Element) sizeList.get(0);
-					int height = Integer.parseInt(sizeElem
-							.getChildText("height"));
-					int width = Integer
-							.parseInt(sizeElem.getChildText("width"));
-					updateGrid(width, height);
-
-					List rows = rootNode.getChildren("row");
-					for (int y = 0; y < rows.size(); y++) {
-						Element cellsElem = (Element) rows.get(y);
-						List cells = cellsElem.getChildren("cell");
-
-						for (int x = 0; x < cells.size(); x++) {
-							Element cell = (Element) cells.get(x);
-							String cellValue = cell.getText();
-
-							char tileNr = 'a';
-							if (cellValue.equals("PathTile"))
-								tileNr = 'a';
-							else if (cellValue.equals("WallTile"))
-								tileNr = 'b';
-							else if (cellValue.equals("PillTile"))
-								tileNr = 'c';
-							else if (cellValue.equals("GoldTile"))
-								tileNr = 'd';
-							else if (cellValue.equals("IceTile"))
-								tileNr = 'e';
-							else if (cellValue.equals("PacTile"))
-								tileNr = 'f';
-							else if (cellValue.equals("TrollTile"))
-								tileNr = 'g';
-							else if (cellValue.equals("TX5Tile"))
-								tileNr = 'h';
-							else if (cellValue.equals("PortalWhiteTile"))
-								tileNr = 'i';
-							else if (cellValue.equals("PortalYellowTile"))
-								tileNr = 'j';
-							else if (cellValue.equals("PortalDarkGoldTile"))
-								tileNr = 'k';
-							else if (cellValue.equals("PortalDarkGrayTile"))
-								tileNr = 'l';
-							else
-								tileNr = '0';
-
-							model.setTile(x, y, tileNr);
-						}
-					}
-					String mapString = model.getMapAsString();
-					grid.redrawGrid();
+				if (selectedFile.isFile()){
+					processFile(selectedFile, builder);
+				}
+				else if (selectedFile.isDirectory()){
+//					processFolder();
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return model;
+	}
+
+	/**
+	 * NEWLY ADDED: Function to process folder
+	 */
+	private void processFolder(File folder){
+
+	}
+
+	/**
+	 * NEWLY ADDED: Function to check if folder is valid (section 2.2.4). Checks following:
+	 * 1. at least one correctly named map file in the folder
+	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
+	 */
+	private boolean gameChecker(File folder){
+		File[] files = folder.listFiles();
+		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
+		char firstChar;
+		int nameNum, countValidFiles = 0;
+		boolean startsWithUniqueNumbers = true;
+
+		// Folder must contain contents to be valid
+		if (files != null){
+			for (int i = 0; i < files.length; i++){
+				// We only use folder contents which are files
+				if (files[i].isFile()){
+					firstChar = files[i].getName().charAt(0);
+					if (Character.isDigit(firstChar)){
+						nameNum = Character.getNumericValue(firstChar);
+						// If a particular number has not been used for a map file name
+						if (!nameHashMap.containsKey(nameNum)) {
+							ArrayList<String> names = new ArrayList<>();
+							names.add(files[i].getName());
+							nameHashMap.put(nameNum, names);
+						}
+						else {
+							nameHashMap.get(nameNum).add(files[i].getName());
+						}
+						countValidFiles++;
+					}
+				}
+			}
+		}
+		if (countValidFiles == 0){
+			// TODO: print error to log (e.g., [Game foldername – no maps found])
+		}
+		for (Integer key: nameHashMap.keySet()){
+			if (nameHashMap.get(key).size() > 1){
+				startsWithUniqueNumbers = false;
+				// TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
+			}
+		}
+		return startsWithUniqueNumbers && countValidFiles >= 1;
+	}
+
+	/**
+	 * NEWLY ADDED: Function to process file
+	 */
+	private void processFile(File selectedFile, SAXBuilder builder){
+
+		Document document;
+		try {
+			if (selectedFile.canRead() && selectedFile.exists()) {
+				document = (Document) builder.build(selectedFile);
+				System.out.println(selectedFile.getName());
+				Element rootNode = document.getRootElement();
+
+				List sizeList = rootNode.getChildren("size");
+				Element sizeElem = (Element) sizeList.get(0);
+				int height = Integer.parseInt(sizeElem
+						.getChildText("height"));
+				int width = Integer
+						.parseInt(sizeElem.getChildText("width"));
+				updateGrid(width, height);
+
+				List rows = rootNode.getChildren("row");
+				for (int y = 0; y < rows.size(); y++) {
+					Element cellsElem = (Element) rows.get(y);
+					List cells = cellsElem.getChildren("cell");
+
+					for (int x = 0; x < cells.size(); x++) {
+						Element cell = (Element) cells.get(x);
+						String cellValue = cell.getText();
+
+						char tileNr = 'a';
+						if (cellValue.equals("PathTile"))
+							tileNr = 'a';
+						else if (cellValue.equals("WallTile"))
+							tileNr = 'b';
+						else if (cellValue.equals("PillTile"))
+							tileNr = 'c';
+						else if (cellValue.equals("GoldTile"))
+							tileNr = 'd';
+						else if (cellValue.equals("IceTile"))
+							tileNr = 'e';
+						else if (cellValue.equals("PacTile"))
+							tileNr = 'f';
+						else if (cellValue.equals("TrollTile"))
+							tileNr = 'g';
+						else if (cellValue.equals("TX5Tile"))
+							tileNr = 'h';
+						else if (cellValue.equals("PortalWhiteTile"))
+							tileNr = 'i';
+						else if (cellValue.equals("PortalYellowTile"))
+							tileNr = 'j';
+						else if (cellValue.equals("PortalDarkGoldTile"))
+							tileNr = 'k';
+						else if (cellValue.equals("PortalDarkGrayTile"))
+							tileNr = 'l';
+						else
+							tileNr = '0';
+
+						model.setTile(x, y, tileNr);
+					}
+				}
+				String mapString = model.getMapAsString();
+				grid.redrawGrid();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
