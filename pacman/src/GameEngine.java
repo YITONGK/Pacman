@@ -84,30 +84,7 @@ public class GameEngine extends GameGrid {
 
             // Set up game actors
             game = new Game(nbHorzCells, nbVertCells);
-            pills = new ArrayList<>();
-            goldPieces = new ArrayList<>();
-            iceCubes = new ArrayList<>();
-            whitePortals = new PortalPair();
-            yellowPortals = new PortalPair();
-            darkGoldPortals = new PortalPair();
-            darkGrayPortals = new PortalPair();
-            setupPillAndItemsLocations();
-            game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
-            pacActor = new PacActor(game, isAuto, seed);
-            setupPacActorAttributes();
-            trolls = new ArrayList<>();
-            tx5s = new ArrayList<>();
-            monsters = new ArrayList<>();
-//            trolls.add(new Troll(game));
-//            tx5s.add(new TX5(game));
-//            monsters.addAll(trolls);
-//            monsters.addAll(tx5s);
-            setupActorLocations();
-            monsters.addAll(trolls);
-            monsters.addAll(tx5s);
-            setupMonsterAttributes();
-            game.addPacMan(pacActor);
-            game.addMonsters(monsters);
+            setUpAll();
 
             // Run game
             GGBackground bg = getBg();
@@ -240,12 +217,16 @@ public class GameEngine extends GameGrid {
         } else if (game.isWin()) {
             String nextFile = findFile(this.currFile, this.mapDir);
             if (nextFile != null) {
+                this.currFile = nextFile;
+                removeAllActors();
                 String filename = mapDir+ "/" + nextFile;
                 File map = new File(filename);
                 this.grid = this.controller.loadFile(map);
-                GGBackground background = getBg();
-                this.background = background;
-                System.out.println("is win next level");
+                this.game = new Game(nbHorzCells, nbVertCells);
+                setUpAll();
+                this.background = getBg();
+                drawGrid();
+                runGame();
             } else {
                 bg.setPaintColor(Color.yellow);
                 title = "YOU WIN";
@@ -267,6 +248,7 @@ public class GameEngine extends GameGrid {
                 bg.setPaintColor(Color.white);
                 location = new Location(x, y);
                 cellValue = grid.getTile(x, y);
+                bg.fillCell(location, Color.gray);
                 // TODO: changed value
                 if (cellValue != 'b') {
                     bg.fillCell(location, Color.lightGray);
@@ -309,6 +291,29 @@ public class GameEngine extends GameGrid {
         } else {
             return null;
         }
+    }
+
+    public void setUpAll() {
+        pills = new ArrayList<>();
+        goldPieces = new ArrayList<>();
+        iceCubes = new ArrayList<>();
+        whitePortals = new PortalPair();
+        yellowPortals = new PortalPair();
+        darkGoldPortals = new PortalPair();
+        darkGrayPortals = new PortalPair();
+        setupPillAndItemsLocations();
+        game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
+        pacActor = new PacActor(game, isAuto, seed);
+        setupPacActorAttributes();
+        trolls = new ArrayList<>();
+        tx5s = new ArrayList<>();
+        monsters = new ArrayList<>();
+        setupActorLocations();
+        monsters.addAll(trolls);
+        monsters.addAll(tx5s);
+        setupMonsterAttributes();
+        game.addPacMan(pacActor);
+        game.addMonsters(monsters);
     }
 
 }
