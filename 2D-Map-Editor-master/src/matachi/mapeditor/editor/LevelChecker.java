@@ -76,32 +76,32 @@ public class LevelChecker {
         }
         // level check 4a
         if (countPacMan == 0){
-            System.out.println("[Level " + file.getName() + " - no start for PacMan]");
+            System.out.println("Level " + file.getName() + ".xml - no start for PacMan");
         }
         if (countPacMan > 1){
-            System.out.println("[Level " + file.getName() + " - more than one start for Pacman: " +
-                    locationListToString(pacmans) + "]");
+            System.out.println("Level " + file.getName() + ".xml - more than one start for Pacman: " +
+                    locationListToString(pacmans));
         }
         // level check 4b
         if (!white.checkPortalTypeIsValid()){
-            System.out.println("[Level " + file.getName() + " – portal White count is not 2: " +
-                    locationListToString(whites) + "]");
+            System.out.println("Level " + file.getName() + ".xml – portal White count is not 2: " +
+                    locationListToString(whites));
         }
         if (!yellow.checkPortalTypeIsValid()){
-            System.out.println("[Level " + file.getName() + " – portal Yellow count is not 2: " +
-                    locationListToString(yellows) + "]");
+            System.out.println("Level " + file.getName() + ".xml – portal Yellow count is not 2: " +
+                    locationListToString(yellows));
         }
         if (!darkGold.checkPortalTypeIsValid()){
-            System.out.println("[Level " + file.getName() + " – portal DarkGold count is not 2: " +
-                    locationListToString(darkGolds) + "]");
+            System.out.println("Level " + file.getName() + ".xml – portal DarkGold count is not 2: " +
+                    locationListToString(darkGolds));
         }
         if (!darkGray.checkPortalTypeIsValid()){
-            System.out.println("[Level " + file.getName() + " – portal DarkGrey count is not 2: " +
-                    locationListToString(darkGreys) + "]");
+            System.out.println("Level " + file.getName() + ".xml – portal DarkGrey count is not 2: " +
+                    locationListToString(darkGreys));
         }
         // level check 4c
         if (countPill + countGold < 2){
-            System.out.println("[Level " + file.getName() + " – less than 2 Gold and Pill]");
+            System.out.println("Level " + file.getName() + ".xml – less than 2 Gold and Pill");
         }
         // level check 4d
         else {
@@ -131,12 +131,12 @@ public class LevelChecker {
                 // print log and return false
                 if (!allPillsAccessible || !allGoldsAccessible) {
                     if (!allPillsAccessible) {
-                        System.out.println("[Level " + file.getName() + " - Pill not accessible: " +
-                                locationListToString(inaccessiblePills) + "]");
+                        System.out.println("Level " + file.getName() + ".xml - Pill not accessible: " +
+                                locationListToString(inaccessiblePills));
                     }
                     if (!allGoldsAccessible) {
-                        System.out.println("[Level " + file.getName() + " - Gold not accessible: " +
-                                locationListToString(inaccessibleGolds) + "]");
+                        System.out.println("Level " + file.getName() + ".xml - Gold not accessible: " +
+                                locationListToString(inaccessibleGolds));
                     }
                     return false;
                 }
@@ -160,7 +160,15 @@ public class LevelChecker {
     private String locationListToString(ArrayList<Location> locations) {
         String output = "";
         for(Location l: locations) {
-            output = output.concat(l.toString()).concat("; ");
+            // in order to match log
+            l.x += 1;
+            l.y += 1;
+            if (locations.indexOf(l) == locations.size() - 1) {
+                output = output.concat(l.toString());
+            }
+            else {
+                output = output.concat(l.toString()).concat("; ");
+            }
         }
         return output;
     }
