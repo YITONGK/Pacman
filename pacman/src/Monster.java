@@ -38,6 +38,11 @@ public abstract class Monster extends MovableActor {
     Location next = walkApproach();
     setLocation(next);
     addVisitedList(next);
+    if ((next = game.moveActorThroughPortal(this)) != null){
+      setLocation(next);
+    }
+    game.resetPortal();
+
     game.getGameCallback().monsterLocationChanged(this);
   }
 

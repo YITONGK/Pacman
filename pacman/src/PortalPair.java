@@ -63,7 +63,7 @@ public class PortalPair {
     /**
      * Function to transport PacMan to the other portal
      */
-    public Location movePacMan(Actor actor){
+    public Location moveActor(Actor actor){
         if (countPortals == 0){
             return null;
         }

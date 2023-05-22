@@ -76,18 +76,18 @@ public class Game {
   }
 
   // TODO: Added portal-overlap-with-pacman logic
-  public Location movePacmanThroughPortal(){
+  public Location moveActorThroughPortal(Actor actor){
     Location moveTo;
-    if ((moveTo = whitePortals.movePacMan(pacActor)) != null){
+    if ((moveTo = whitePortals.moveActor(actor)) != null){
       return moveTo;
     }
-    else if ((moveTo = yellowPortals.movePacMan(pacActor)) != null){
+    else if ((moveTo = yellowPortals.moveActor(actor)) != null){
       return moveTo;
     }
-    else if ((moveTo = darkGrayPortals.movePacMan(pacActor)) != null){
+    else if ((moveTo = darkGrayPortals.moveActor(actor)) != null){
       return moveTo;
     }
-    else if ((moveTo = darkGoldPortals.movePacMan(pacActor)) != null){
+    else if ((moveTo = darkGoldPortals.moveActor(actor)) != null){
       return moveTo;
     }
     return null;

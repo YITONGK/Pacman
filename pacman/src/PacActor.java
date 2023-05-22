@@ -37,6 +37,10 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
       setLocation(next);
       eatPill(next);
       addVisitedList(next);
+      if ((next = game.moveActorThroughPortal(this)) != null){
+        setLocation(next);
+      }
+      game.resetPortal();
     }
     this.game.getGameCallback().pacManLocationChanged(getLocation(), score, nbPills);
   }
@@ -72,7 +76,7 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     {
       setLocation(next);
       eatPill(next);
-      if ((pacNewLocation = game.movePacmanThroughPortal()) != null){
+      if ((pacNewLocation = game.moveActorThroughPortal(this)) != null){
         setLocation(pacNewLocation);
       }
       game.resetPortal();

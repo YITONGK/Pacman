@@ -10,10 +10,15 @@ import java.util.Random;
 public class DirectedApproach implements MoveStrategy {
 
     protected Random randomiser = new Random();
+    private Game game;
+    List<Item> items = new ArrayList<>();
 
 
     public DirectedApproach(int seed, Game game) {
         randomiser.setSeed(seed);
+        this.game = game;
+        items.addAll(game.getPills());
+        items.addAll(game.getGoldPieces());
     }
 
 
@@ -23,9 +28,6 @@ public class DirectedApproach implements MoveStrategy {
         int currentDistance = 1000;
         Location currentLocation = null;
         int distanceToItem;
-        List<Item> items = new ArrayList<>();
-        items.addAll(game.getPills());
-        items.addAll(game.getGoldPieces());
         for (Item item : items) {
             if (item.getIdVisible() == -1) {
                 distanceToItem = item.getLocation().getDistanceTo(pacman.getLocation());
