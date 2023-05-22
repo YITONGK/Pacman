@@ -31,8 +31,8 @@ public class GameEngine extends GameGrid {
     private boolean isAuto;
     private Game game;
     protected PacActor pacActor;
-    private Monster troll;
-    private Monster tx5;
+    private ArrayList<Monster> trolls;
+    private ArrayList<Monster> tx5s;
     private Grid grid;
     private ArrayList<Monster> monsters;
     private ArrayList<Item> pills;
@@ -88,13 +88,17 @@ public class GameEngine extends GameGrid {
             game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
             pacActor = new PacActor(game, isAuto, seed);
             setupPacActorAttributes();
+            trolls = new ArrayList<>();
+            tx5s = new ArrayList<>();
             monsters = new ArrayList<>();
-            troll = new Troll(game);
-            tx5 = new TX5(game);
-            monsters.add(troll);
-            monsters.add(tx5);
-            setupMonsterAttributes();
+//            trolls.add(new Troll(game));
+//            tx5s.add(new TX5(game));
+//            monsters.addAll(trolls);
+//            monsters.addAll(tx5s);
             setupActorLocations();
+            monsters.addAll(trolls);
+            monsters.addAll(tx5s);
+            setupMonsterAttributes();
             game.addPacMan(pacActor);
             game.addMonsters(monsters);
 
@@ -131,6 +135,8 @@ public class GameEngine extends GameGrid {
         Location pacLocation = null;
         Location trollLocation = null;
         Location tx5Location = null;
+        int num_trolls = 0;
+        int num_tx5s = 0;
 
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
@@ -138,18 +144,22 @@ public class GameEngine extends GameGrid {
                 char a = grid.getTile(x, y);
                 if (a == 'f') {
                     pacLocation = location;
+                    addActor(pacActor, pacLocation);
                 }
                 if (a == 'g') {
+                    trolls.add(new Troll(game));
                     trollLocation = location;
+                    addActor(trolls.get(num_trolls), trollLocation, Location.NORTH);
+                    num_trolls ++;
                 }
                 if (a == 'h') {
+                    tx5s.add(new TX5(game));
                     tx5Location = location;
+                    addActor(tx5s.get(num_tx5s), tx5Location, Location.NORTH);
+                    num_tx5s ++;
                 }
             }
         }
-        addActor(troll, trollLocation, Location.NORTH);
-        addActor(tx5, tx5Location, Location.NORTH);
-        addActor(pacActor, pacLocation);
     }
 
 
