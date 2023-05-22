@@ -11,8 +11,6 @@ public class PortalPair {
     // Each portal is an Item
     private ArrayList<Item> portals;
 
-
-
     private int countPortals;
     // Flag to check the nature of PacMan-Portal overlap
     // (i.e., did PacMan move onto Portal, or was PacMan transported onto Portal?)

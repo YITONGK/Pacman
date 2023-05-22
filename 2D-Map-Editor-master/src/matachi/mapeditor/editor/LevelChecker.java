@@ -51,12 +51,10 @@ public class LevelChecker {
                 else if (tileChar == 'c') {
                     countPill++;
                     pills.add(location);
-//                    System.out.println("pill location: (" + location.x + ", " + location.y + ")");
                 }
                 else if (tileChar == 'd'){
                     countGold++;
                     golds.add(location);
-//                    System.out.println("gold location: (" + location.x + ", " + location.y + ")");
                 }
                 else if (tileChar == 'i'){
                     white.addPortal(new Item(ItemType.WHITE_PORTAL.getImage(), location));
@@ -117,7 +115,6 @@ public class LevelChecker {
                 ArrayList<Location> inaccessiblePills = new ArrayList<>();
                 ArrayList<Location> inaccessibleGolds = new ArrayList<>();
                 boolean[][] accessibleLocations = BFS.bfs(model, pacmans.get(0));
-//                print2D(accessibleLocations);
                 // loop the item list to see whether every item is at a reachable location
                 for (Location l: pills) {
                     if (!accessibleLocations[l.x][l.y]) {
@@ -169,9 +166,9 @@ public class LevelChecker {
     }
 
     private void print2D(boolean[][] array) {
-        for (int i = 0; i <= 11; i ++) {
-            for (int j = 0; j <= 20; j ++) {
-                System.out.print(array[i][j] ? "T " : "F ");
+        for (int i = 0; i < 11; i ++) {
+            for (int j = 0; j < 20; j ++) {
+                System.out.print(array[j][i] ? "T " : "F ");
             }
             System.out.println();
         }
