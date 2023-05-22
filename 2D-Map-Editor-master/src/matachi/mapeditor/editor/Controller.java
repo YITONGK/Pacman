@@ -237,6 +237,16 @@ public class Controller implements ActionListener, GUIInformation {
 		return model;
 	}
 
+	public Grid loadFile(File mPath) {
+		SAXBuilder builder = new SAXBuilder();
+		try {
+			processFile(mPath, builder);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return model;
+	}
+
 	/**
 	 * NEWLY ADDED: Function to process folder
 	 */

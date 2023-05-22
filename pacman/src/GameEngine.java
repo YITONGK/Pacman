@@ -8,6 +8,7 @@ import matachi.mapeditor.grid.Grid;
 import matachi.mapeditor.grid.GridView;
 import src.utility.GameCallback;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 import src.utility.PropertiesLoader;
@@ -45,12 +46,32 @@ public class GameEngine extends GameGrid {
     private Properties properties;
     private final int SPEED_DOWN = 3;
 
-    public GameEngine(String propertiesPath, String mapPath, Controller controller) {
+    public GameEngine(String propertiesPath, String mapDir, Controller controller) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
         // TODO: changed grid from PacManGameGrid to Grid
-        grid = controller.loadFile();
+        File folder = new File(mapDir);
+        String smallestFileName = null;
+        int smallestNumber = Integer.MAX_VALUE;
+        File[] files = folder.listFiles();
+        for (File file : files) {
+            if (file.isFile() && file.getName().matches("\\d.*")) {
+                String fileName = file.getName();
+                int number = Integer.parseInt(fileName.replaceAll("\\D+", ""));
+                if (number < smallestNumber) {
+                    smallestNumber = number;
+                    smallestFileName = fileName;
+                }
+            }
+        }
+        if (smallestFileName != null) {
+            String filename = mapDir+ "/" + smallestFileName;
+            File map = new File(filename);
+            grid = controller.loadFile(map);
+        } else {
+            grid = controller.loadFile();
+        }
         seed = Integer.parseInt(properties.getProperty("seed"));
         isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
         setSimulationPeriod(SIMULATION_PERIOD);
