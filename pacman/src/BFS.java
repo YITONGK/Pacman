@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Queue;
 
 public class BFS {
-    private final static int Horz = 20;
-    private final static int Vert = 11;
+    private final static int Horz = 20+1;
+    private final static int Vert = 11+1;
     private final static int[] delta_x = {-1, 0, 1, 0};
     private final static int[] delta_y = {0, 1, 0, -1};
     private final static char[] portals = {'i', 'j', 'k', 'l'};
@@ -31,7 +31,7 @@ public class BFS {
                 int newY = current.y + delta_y[i];
                 char cell = grid.getTile(newX, newY);
                 // skip if the new location is out of bounds or visited or is a wall
-                if ((newX < 0 || newX >= Horz) || (newY < 0 || newY >= Vert) || visited[newX][newY]
+                if ((newX <= 0 || newX >= Horz) || (newY <= 0 || newY >= Vert) || visited[newX][newY]
                     || cell == 'b') {
                     continue;
                 }
@@ -40,8 +40,8 @@ public class BFS {
                 // if the new location is a portal, add its corresponding portal to the queue
                 for (char c: portals) {
                     if (cell == c) {
-                        for (int m = 0; m < Horz; m ++) {
-                            for (int n = 0; n < Vert; n++) {
+                        for (int m = 1; m < Horz; m ++) {
+                            for (int n = 1; n < Vert; n++) {
                                 if (grid.getTile(m, n) == cell) {
                                     queue.add(new Location(m, n));
                                 }

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 public class PortalPair {
     // Each portal is an Item
     private ArrayList<Item> portals;
+
+
+
     private int countPortals;
     // Flag to check the nature of PacMan-Portal overlap
     // (i.e., did PacMan move onto Portal, or was PacMan transported onto Portal?)
@@ -35,7 +38,8 @@ public class PortalPair {
      * @return
      */
     public boolean checkPortalTypeIsValid(){
-        return checkPortalCount() && checkTwoDistinctTiles();
+        return checkPortalCount();
+//        return checkPortalCount() && checkTwoDistinctTiles();
     }
 
     /**
@@ -48,17 +52,17 @@ public class PortalPair {
     /**
      * Function to check that the two portals lie on two distinct tiles
      */
-    private boolean checkTwoDistinctTiles(){
-        Item portal1 = portals.get(0);
-        Item portal2 = portals.get(1);
-        if (portal1.getLocation().equals(portal2.getLocation())){
-            // Decrement number of portals since they are in the same location (i.e., does nothing)
-            countPortals = countPortals - 1;
-            portals.remove(portal2);
-            return false;
-        }
-        return true;
-    }
+//    private boolean checkTwoDistinctTiles(){
+//        Item portal1 = portals.get(0);
+//        Item portal2 = portals.get(1);
+//        if (portal1.getLocation().equals(portal2.getLocation())){
+//            // Decrement number of portals since they are in the same location (i.e., does nothing)
+//            countPortals = countPortals - 1;
+//            portals.remove(portal2);
+//            return false;
+//        }
+//        return true;
+//    }
 
     /**
      * Function to transport PacMan to the other portal
@@ -107,4 +111,13 @@ public class PortalPair {
         }
         return locations;
     }
+
+//    public ArrayList<Item> getPortals() {
+//        return portals;
+//    }
+//
+//    public int getCountPortals() {
+//        return countPortals;
+//    }
+
 }

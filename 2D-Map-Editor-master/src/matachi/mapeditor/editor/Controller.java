@@ -330,7 +330,7 @@ public class Controller implements ActionListener, GUIInformation {
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
-				System.out.println(selectedFile.getName());
+				System.out.println("Filename: " + selectedFile.getName());
 				Element rootNode = document.getRootElement();
 
 				List sizeList = rootNode.getChildren("size");

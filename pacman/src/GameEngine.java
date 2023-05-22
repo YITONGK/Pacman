@@ -4,6 +4,7 @@ package src;
 
 import ch.aplu.jgamegrid.*;
 import matachi.mapeditor.editor.Controller;
+import matachi.mapeditor.editor.LevelChecker;
 import matachi.mapeditor.grid.Grid;
 import matachi.mapeditor.grid.GridView;
 import src.utility.GameCallback;
@@ -77,6 +78,11 @@ public class GameEngine extends GameGrid {
             String filename = mapDir+ "/" + smallestFileName;
             File map = new File(filename);
             grid = controller.loadFile(map);
+            LevelChecker levelChecker = LevelChecker.getInstance();
+            boolean isValid = levelChecker.checkLevel(map, this.grid);
+            if (!isValid) {
+                return;
+            }
             seed = Integer.parseInt(properties.getProperty("seed"));
             isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
             setSimulationPeriod(SIMULATION_PERIOD);
@@ -222,6 +228,12 @@ public class GameEngine extends GameGrid {
                 String filename = mapDir+ "/" + nextFile;
                 File map = new File(filename);
                 this.grid = this.controller.loadFile(map);
+                LevelChecker levelChecker = LevelChecker.getInstance();
+                boolean isValid = levelChecker.checkLevel(map, this.grid);
+                if (!isValid) {
+                    doPause();
+                    return;
+                }
                 this.game = new Game(nbHorzCells, nbVertCells);
                 setUpAll();
                 this.background = getBg();
