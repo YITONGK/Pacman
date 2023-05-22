@@ -2,6 +2,7 @@ package matachi.mapeditor.editor;
 
 import ch.aplu.jgamegrid.Location;
 import matachi.mapeditor.grid.Grid;
+import src.BFS;
 import src.Item;
 import src.ItemType;
 import src.PortalPair;
@@ -62,46 +63,73 @@ public class LevelChecker {
                 }
             }
         }
+        // level check 4a
         if (countPacMan == 0){
-            // TODO: Add log statement for no pacman
-            //  e.g., [Level 2mapname.xml – no start for PacMan]
             System.out.println("[Level " + file.getName() + " - no start for PacMan]");
         }
         if (countPacMan > 1){
-            // TODO: Add log statement for more than one Pacman
-            //  e.g., [Level 5_levelname.xml – more than one start for Pacman: (3,7); (8, 1); (5, 2)]
             System.out.println("[Level " + file.getName() + " - more than one start for Pacman: " +
                     locationListToString(pacmans) + "]");
         }
+        // level check 4b
         if (!white.checkPortalTypeIsValid()){
-            // TODO: Add log statement for invalid number of white portals
-            //  e.g.,[Level 1_mapname.xml – portal White count is not 2: (2,3); (6,7); (1,8)
             System.out.println("[Level " + file.getName() + " – portal White count is not 2: " +
                     locationListToString(whites) + "]");
         }
         if (!yellow.checkPortalTypeIsValid()){
-            // TODO: Add log statement for invalid number of yellow portals
             System.out.println("[Level " + file.getName() + " – portal Yellow count is not 2: " +
                     locationListToString(yellows) + "]");
         }
         if (!darkGold.checkPortalTypeIsValid()){
-            // TODO: Add log statement for invalid number of dark gold portals
             System.out.println("[Level " + file.getName() + " – portal DarkGold count is not 2: " +
                     locationListToString(darkGolds) + "]");
         }
         if (!darkGray.checkPortalTypeIsValid()){
-            // TODO: Add log statement for invalid number of dark gray portals
             System.out.println("[Level " + file.getName() + " – portal DarkGrey count is not 2: " +
                     locationListToString(darkGreys) + "]");
         }
+        // level check 4c
         if (countPill + countGold < 2){
-            // TODO: Add log statement for invalid number of gold + pill
             System.out.println("[Level " + file.getName() + " – less than 2 Gold and Pill]");
         }
-
-        // TODO MISSING: level checking (4d) logic (each gold is accessible accounting for portals)
+        // level check 4d
         else {
-            // TODO: BFS
+            // if pacman start point goes wrong, no need to check 4d
+            if (countPacMan != 1) {
+                return false;
+            }
+            else {
+                boolean allPillsAccessible = true;
+                boolean allGoldsAccessible = true;
+                ArrayList<Location> inaccessiblePills = new ArrayList<>();
+                ArrayList<Location> inaccessibleGolds = new ArrayList<>();
+                boolean[][] accessibleLocations = BFS.bfs(model, pacmans.get(0));
+                // loop the item list to see whether every item is at a reachable location
+                for (Location l: pills) {
+                    if (!accessibleLocations[l.x][l.y]) {
+                        allPillsAccessible = false;
+                        inaccessiblePills.add(l);
+                    }
+                }
+                for (Location l: golds) {
+                    if (!accessibleLocations[l.x][l.y]) {
+                        allGoldsAccessible = false;
+                        inaccessibleGolds.add(l);
+                    }
+                }
+                // print log and return false
+                if (!allPillsAccessible || !allGoldsAccessible) {
+                    if (!allPillsAccessible) {
+                        System.out.println("[Level " + file.getName() + " - Pill not accessible: " +
+                                locationListToString(inaccessiblePills) + "]");
+                    }
+                    if (!allGoldsAccessible) {
+                        System.out.println("[Level " + file.getName() + " - Gold not accessible: " +
+                                locationListToString(inaccessibleGolds) + "]");
+                    }
+                    return false;
+                }
+            }
         }
 
         return (countPacMan == 1) && (countGold + countPill >= 2) &&
@@ -117,6 +145,7 @@ public class LevelChecker {
                 && darkGold.checkPortalTypeIsValid();
     }
 
+    // used for printing log as locations should be displayed as "(x1, y1); (x2, y2); (x3, y3)"
     private String locationListToString(ArrayList<Location> locations) {
         String output = "";
         for(Location l: locations) {
