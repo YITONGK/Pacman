@@ -131,9 +131,6 @@ public class Game {
   public ArrayList<Item> getGoldPieces() {
     return this.goldPieces;
   }
-  public ArrayList<Item> getIceCubes() {
-    return this.iceCubes;
-  }
 
   public int getNumHorzCells() {
     return this.nbHorzCells;

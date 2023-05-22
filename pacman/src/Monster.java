@@ -36,23 +36,8 @@ public abstract class Monster extends MovableActor {
   // The monsters walk according to different states
   public void walk() {
     Location next = walkApproach();
-    // isFurious is false, monsters move normally
-    if (!isFurious) {
-      setLocation(next);
-      addVisitedList(next);
-    } else {
-      // jump is the next location in the direction of current next possible move action
-      Location jump = next.getNeighbourLocation(getLocation().getDirectionTo(next));
-      if (canMove(jump)) {
-        setLocation(jump);
-        addVisitedList(jump);
-      }
-      // if the monster can't move 2 cells this time, move 1 cell as normal
-      else {
-        setLocation(next);
-        addVisitedList(next);
-      }
-    }
+    setLocation(next);
+    addVisitedList(next);
     game.getGameCallback().monsterLocationChanged(this);
   }
 
@@ -88,39 +73,6 @@ public abstract class Monster extends MovableActor {
           return next;
         }
       }
-    }
-  }
-
-  public void becomeFrozen(int seconds) {
-    // as said in spec, monsters become frozen even if they are in furious state
-    this.isFrozen = true;
-    this.isFurious = false;
-    Timer timer = new Timer(); // Instantiate Timer Object
-    int SECOND_TO_MILLISECONDS = 1000;
-    final Monster monster = this;
-    timer.schedule(new TimerTask() {
-      @Override
-      public void run() {
-        monster.isFrozen = false;
-      }
-    }, seconds * SECOND_TO_MILLISECONDS);
-  }
-
-  public void becomeFurious(int seconds) {
-    // if pac eats a gold, but the monsters are frozen at the moment, we won't make monsters furious, just return
-    if (isFrozen) {
-      return;
-    } else {
-      this.isFurious = true;
-      Timer timer = new Timer(); // Instantiate Timer Object
-      int SECOND_TO_MILLISECONDS = 1000;
-      final Monster monster = this;
-      timer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          monster.isFurious = false;
-        }
-      }, seconds * SECOND_TO_MILLISECONDS);
     }
   }
 

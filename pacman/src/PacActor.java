@@ -16,11 +16,15 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
   private int score = 0;
   private boolean isAuto;
   private int seed;
+  private MoveStrategy moveStrategy;
 
   public PacActor(Game game, boolean isAuto, int seed) {
     super(game);
     this.isAuto = isAuto;
     this.seed = seed;
+    if (isAuto) {
+      moveStrategy = new DirectedApproach(this.seed, game);
+    }
   }
 
   public void act() {
@@ -29,7 +33,6 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     if (idSprite == nbSprites)
       idSprite = 0;
     if (isAuto) {
-      MoveStrategy moveStrategy = new DirectedApproach(this.seed);
       Location next = moveStrategy.move(this, game);
       setLocation(next);
       eatPill(next);
