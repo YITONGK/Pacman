@@ -69,40 +69,40 @@ public class GameEngine extends GameGrid {
             String filename = mapDir+ "/" + smallestFileName;
             File map = new File(filename);
             grid = controller.loadFile(map);
+            seed = Integer.parseInt(properties.getProperty("seed"));
+            isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
+            setSimulationPeriod(SIMULATION_PERIOD);
+            setTitle(TITLE);
+
+            // Set up game actors
+            game = new Game(nbHorzCells, nbVertCells);
+            pills = new ArrayList<>();
+            goldPieces = new ArrayList<>();
+            whitePortals = new PortalPair();
+            yellowPortals = new PortalPair();
+            darkGoldPortals = new PortalPair();
+            darkGrayPortals = new PortalPair();
+            setupPillAndItemsLocations();
+            game.addItems(pills, goldPieces, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
+            pacActor = new PacActor(game, isAuto, seed);
+            setupPacActorAttributes();
+            monsters = new ArrayList<>();
+            troll = new Troll(game);
+            tx5 = new TX5(game);
+            monsters.add(troll);
+            monsters.add(tx5);
+            setupMonsterAttributes();
+            setupActorLocations();
+            game.addPacMan(pacActor);
+            game.addMonsters(monsters);
+
+            // Run game
+            GGBackground bg = getBg();
+            drawGrid(bg);
+            runGame(bg);
         } else {
-            grid = controller.loadFile();
+            grid = controller.getModel();
         }
-        seed = Integer.parseInt(properties.getProperty("seed"));
-        isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
-        setSimulationPeriod(SIMULATION_PERIOD);
-        setTitle(TITLE);
-
-        // Set up game actors
-        game = new Game(nbHorzCells, nbVertCells);
-        pills = new ArrayList<>();
-        goldPieces = new ArrayList<>();
-        whitePortals = new PortalPair();
-        yellowPortals = new PortalPair();
-        darkGoldPortals = new PortalPair();
-        darkGrayPortals = new PortalPair();
-        setupPillAndItemsLocations();
-        game.addItems(pills, goldPieces, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
-        pacActor = new PacActor(game, isAuto, seed);
-        setupPacActorAttributes();
-        monsters = new ArrayList<>();
-        troll = new Troll(game);
-        tx5 = new TX5(game);
-        monsters.add(troll);
-        monsters.add(tx5);
-        setupMonsterAttributes();
-        setupActorLocations();
-        game.addPacMan(pacActor);
-        game.addMonsters(monsters);
-
-        // Run game
-        GGBackground bg = getBg();
-        drawGrid(bg);
-        runGame(bg);
     }
 
     private void setupPacActorAttributes() {

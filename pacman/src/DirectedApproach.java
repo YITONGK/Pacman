@@ -27,7 +27,7 @@ public class DirectedApproach implements MoveStrategy {
         items.addAll(game.getPills());
         items.addAll(game.getGoldPieces());
         for (Item item : items) {
-            if (item.getIdVisible() != -1) {
+            if (item.getIdVisible() == -1) {
                 distanceToItem = item.getLocation().getDistanceTo(pacman.getLocation());
                 if (distanceToItem < currentDistance) {
                     currentLocation = item.getLocation();

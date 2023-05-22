@@ -77,6 +77,7 @@ public class Controller implements ActionListener, GUIInformation {
 	public void init(int width, int height) {
 		this.tiles = TileManager.getTilesFromFolder("2D-Map-Editor-master/data/");
 		// Used for when editor is started with a map as argument
+
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
 		// Used for when editor is started with a folder as argument
 		this.folderModels =  new ArrayList<>();
@@ -87,6 +88,11 @@ public class Controller implements ActionListener, GUIInformation {
 													// 30x30 pixels
 
 		this.view = new View(this, camera, grid, tiles);
+
+	}
+
+	public Grid getModel() {
+		return this.model;
 	}
 
 	/**
