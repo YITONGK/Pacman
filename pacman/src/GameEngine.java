@@ -140,9 +140,9 @@ public class GameEngine extends GameGrid {
     // TODO: using map to set up actor locations instead of property file
     private void setupActorLocations() {
         Location location;
-        Location pacLocation = null;
-        Location trollLocation = null;
-        Location tx5Location = null;
+        Location pacLocation;
+        Location trollLocation;
+        Location tx5Location;
         int num_trolls = 0;
         int num_tx5s = 0;
 

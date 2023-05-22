@@ -447,6 +447,7 @@ public class Controller implements ActionListener, GUIInformation {
 		if (countPacMan > 1){
 			// TODO: Add log statement for more than one Pacman
 			//  e.g., [Level 5_levelname.xml – more than one start for Pacman: (3,7); (8, 1); (5, 2)]
+
 		}
 		if (!white.checkPortalTypeIsValid()){
 			// TODO: Add log statement for invalid number of white portals
@@ -466,8 +467,8 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 		// TODO MISSING: level checking (4d) logic (each gold is accessible accounting for portals)
 
-		return countPacMan == 1 && countGold >= 2 && countPill >= 2 &&
-				checkPortalTypeIsValid(white, yellow, darkGold, darkGray);
+		return (countPacMan == 1) && (countGold + countPill >= 2) &&
+				(checkPortalTypeIsValid(white, yellow, darkGold, darkGray));
 	}
 
 	/**
