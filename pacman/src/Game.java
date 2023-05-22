@@ -61,7 +61,7 @@ public class Game {
   }
 
   // TODO: Added portals to game
-  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces,
+  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces, ArrayList<Item> iceCubes,
     PortalPair whitePortals, PortalPair yellowPortals, PortalPair darkGrayPortals, PortalPair darkGoldPortals) {
     this.pills = new ArrayList<>();
     this.pills.addAll(pills);
@@ -131,6 +131,10 @@ public class Game {
   public ArrayList<Item> getGoldPieces() {
     return this.goldPieces;
   }
+  public ArrayList<Item> getIceCubes() {
+    return this.iceCubes;
+  }
+
 
   public int getNumHorzCells() {
     return this.nbHorzCells;

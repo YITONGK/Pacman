@@ -37,6 +37,7 @@ public class GameEngine extends GameGrid {
     private ArrayList<Monster> monsters;
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
+    private ArrayList<Item> iceCubes;
     // TODO: Added portal instances (can also instantiate in own class - I may change this code in the future)
     private PortalPair whitePortals;
     private PortalPair yellowPortals;
@@ -78,12 +79,13 @@ public class GameEngine extends GameGrid {
             game = new Game(nbHorzCells, nbVertCells);
             pills = new ArrayList<>();
             goldPieces = new ArrayList<>();
+            iceCubes = new ArrayList<>();
             whitePortals = new PortalPair();
             yellowPortals = new PortalPair();
             darkGoldPortals = new PortalPair();
             darkGrayPortals = new PortalPair();
             setupPillAndItemsLocations();
-            game.addItems(pills, goldPieces, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
+            game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
             pacActor = new PacActor(game, isAuto, seed);
             setupPacActorAttributes();
             monsters = new ArrayList<>();
@@ -167,6 +169,11 @@ public class GameEngine extends GameGrid {
                     goldPieces.add(item);
                     addActor(item, location);
                 }
+                if (a == 'e') {
+                    item = new Item(ItemType.ICE_CUBE.getImage(), location);
+                    iceCubes.add(item);
+                    addActor(item, location);
+                }
                 if (a == 'i'){
                     item = new Item(ItemType.WHITE_PORTAL.getImage(), location);
                     whitePortals.addPortal(item);
@@ -242,6 +249,10 @@ public class GameEngine extends GameGrid {
         for (Item item : goldPieces) {
             bg.setPaintColor(Color.yellow);
             bg.fillCircle(toPoint(item.getLocation()), 10);
+        }
+        for (Item item: iceCubes) {
+            bg.setPaintColor(Color.blue);
+            bg.fillCircle(toPoint(item.getLocation()), 5);
         }
     }
 }
