@@ -21,14 +21,13 @@ public class GameEngine extends GameGrid {
 
     private final static int nbHorzCells = 20;
     private final static int nbVertCells = 11;
-    private final static int cellSize = 20;
+    private final static int cellSize = 33;
     private final static int SIMULATION_PERIOD = 100;
     private final static int KEY_PERIOD = 150;
     private final static String TITLE = "[PacMan in the Torusverse]";
     private final static boolean isNavigation = false;
     private int seed = 30006;
-    private String mode;
-
+    private boolean isAuto;
     private Game game;
     protected PacActor pacActor;
     private Monster troll;
@@ -37,7 +36,6 @@ public class GameEngine extends GameGrid {
     private ArrayList<Monster> monsters;
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
-    private ArrayList<Item> iceCubes;
     // TODO: Added portal instances (can also instantiate in own class - I may change this code in the future)
     private PortalPair whitePortals;
     private PortalPair yellowPortals;
@@ -54,22 +52,21 @@ public class GameEngine extends GameGrid {
         // TODO: changed grid from PacManGameGrid to Grid
         grid = controller.loadFile();
         seed = Integer.parseInt(properties.getProperty("seed"));
-        mode = properties.getProperty("version");
+        isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
         setSimulationPeriod(SIMULATION_PERIOD);
         setTitle(TITLE);
 
         // Set up game actors
-        game = new Game(mode, nbHorzCells, nbVertCells);
+        game = new Game(nbHorzCells, nbVertCells);
         pills = new ArrayList<>();
         goldPieces = new ArrayList<>();
-        iceCubes = new ArrayList<>();
         whitePortals = new PortalPair();
         yellowPortals = new PortalPair();
         darkGoldPortals = new PortalPair();
         darkGrayPortals = new PortalPair();
         setupPillAndItemsLocations();
-        game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
-        pacActor = new PacActor(game);
+        game.addItems(pills, goldPieces, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
+        pacActor = new PacActor(game, isAuto, seed);
         setupPacActorAttributes();
         monsters = new ArrayList<>();
         troll = new Troll(game);
@@ -149,11 +146,6 @@ public class GameEngine extends GameGrid {
                     goldPieces.add(item);
                     addActor(item, location);
                 }
-                if (a == 'e') {
-                    item = new Item(ItemType.ICE_CUBE.getImage(), location);
-                    iceCubes.add(item);
-                    addActor(item, location);
-                }
                 if (a == 'i'){
                     item = new Item(ItemType.WHITE_PORTAL.getImage(), location);
                     whitePortals.addPortal(item);
@@ -224,15 +216,11 @@ public class GameEngine extends GameGrid {
             }
         }
         for (Item item: pills) {
-            bg.fillCircle(toPoint(item.getLocation()), 5);
+            bg.fillCircle(toPoint(item.getLocation()), 10);
         }
         for (Item item : goldPieces) {
             bg.setPaintColor(Color.yellow);
-            bg.fillCircle(toPoint(item.getLocation()), 5);
-        }
-        for (Item item: iceCubes) {
-            bg.setPaintColor(Color.blue);
-            bg.fillCircle(toPoint(item.getLocation()), 5);
+            bg.fillCircle(toPoint(item.getLocation()), 10);
         }
     }
 }

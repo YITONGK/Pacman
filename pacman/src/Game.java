@@ -11,7 +11,6 @@ import java.util.ArrayList;
  * and updates the monsters' behaviors during the game.
  */
 public class Game {
-  private final String mode;
   private final int nbHorzCells;
   private final int nbVertCells;
   private boolean hasPacmanBeenHit;
@@ -27,8 +26,7 @@ public class Game {
   private PortalPair darkGrayPortals;
   private GameCallback gameCallback;
 
-  public Game(String mode, int nbHorzCells, int nbVertCells) {
-    this.mode = mode;
+  public Game(int nbHorzCells, int nbVertCells) {
     this.nbHorzCells = nbHorzCells;
     this.nbVertCells = nbVertCells;
     this.gameCallback = new GameCallback();
@@ -63,7 +61,7 @@ public class Game {
   }
 
   // TODO: Added portals to game
-  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces, ArrayList<Item> iceCubes,
+  public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces,
     PortalPair whitePortals, PortalPair yellowPortals, PortalPair darkGrayPortals, PortalPair darkGoldPortals) {
     this.pills = new ArrayList<>();
     this.pills.addAll(pills);
@@ -135,10 +133,6 @@ public class Game {
   }
   public ArrayList<Item> getIceCubes() {
     return this.iceCubes;
-  }
-
-  public String getGameVersion() {
-    return this.mode;
   }
 
   public int getNumHorzCells() {

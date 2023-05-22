@@ -8,17 +8,19 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class PacActor extends MovableActor implements GGKeyRepeatListener {
   private int idSprite = 0;
   private int nbPills = 0;
   private int score = 0;
-  private List<String> propertyMoves = new ArrayList<>();
-  private int propertyMoveIndex = 0;
-  private boolean isAuto = false;
+  private boolean isAuto;
+  private int seed;
 
-  public PacActor(Game game) {
+  public PacActor(Game game, boolean isAuto, int seed) {
     super(game);
+    this.isAuto = isAuto;
+    this.seed = seed;
   }
 
   public void act() {
@@ -27,7 +29,11 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     if (idSprite == nbSprites)
       idSprite = 0;
     if (isAuto) {
-      moveInAutoMode();
+      MoveStrategy moveStrategy = new DirectedApproach(this.seed);
+      Location next = moveStrategy.move(this, game);
+      setLocation(next);
+      eatPill(next);
+      addVisitedList(next);
     }
     this.game.getGameCallback().pacManLocationChanged(getLocation(), score, nbPills);
   }
@@ -35,7 +41,6 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
   // this method is used for user keyboard input to control pacman when pacman is not in auto mode
   public void keyRepeated(int keyCode) {
     Location pacNewLocation;
-
     if (isAuto) {
       return;
     }
@@ -70,105 +75,67 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
       game.resetPortal();
     }
   }
-
-  private void moveInAutoMode() {
-    // pacman will initially move following the commands
-    if (propertyMoves.size() > propertyMoveIndex) {
-      followPropertyMoves();
-      return;
-    }
-    // after finishing all the move commands, pacman will automatically choose next location due to the closest pill
-    Location closestPill = closestPillLocation();
-    double oldDirection = getDirection();
-    Location.CompassDirection compassDir =
-            getLocation().get4CompassDirectionTo(closestPill);
-    Location next = getLocation().getNeighbourLocation(compassDir);
-    setDirection(compassDir);
-    if (!isVisited(next) && canMove(next)) {
-      setLocation(next);
-    } else {
-      // normal movement
-      int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
-      setDirection(oldDirection);
-      turn(sign * 90);  // Try to turn left/right
-      next = getNextMoveLocation();
-      if (canMove(next)) {
-        setLocation(next);
-      } else {
-        setDirection(oldDirection);
-        next = getNextMoveLocation();
-        if (canMove(next)) // Try to move forward
-        {
-          setLocation(next);
-        } else {
-          setDirection(oldDirection);
-          turn(-sign * 90);  // Try to turn right/left
-          next = getNextMoveLocation();
-          if (canMove(next)) {
-            setLocation(next);
-          } else {
-            setDirection(oldDirection);
-            turn(180);  // Turn backward
-            next = getNextMoveLocation();
-            setLocation(next);
-          }
-        }
-      }
-    }
-    eatPill(next);
-    addVisitedList(next);
-  }
-
-  // this method is used to choose the location which is closest to a remaining item
-  // will be used in auto move mode, to help pacman automatically choose next step
-  private Location closestPillLocation() {
-    int currentDistance = 1000;
-    Location currentLocation = null;
-    int distanceToItem;
-    List<Item> items = new ArrayList<>();
-    items.addAll(game.getPills());
-    items.addAll(game.getGoldPieces());
-    items.addAll(game.getIceCubes());
-    for (Item item: items) {
-      distanceToItem = item.getLocation().getDistanceTo(getLocation());
-      if (distanceToItem < currentDistance) {
-        currentLocation = item.getLocation();
-        currentDistance = distanceToItem;
-      }
-    }
-    return currentLocation;
-  }
-
-  public void setAuto(boolean auto) {
-    isAuto = auto;
-  }
-
-  public void setPropertyMoves(String propertyMoveString) {
-    if (propertyMoveString != null) {
-      this.propertyMoves = Arrays.asList(propertyMoveString.split(","));
-    }
-  }
-
-  private void followPropertyMoves() {
-    String currentMove = propertyMoves.get(propertyMoveIndex);
-    // "R" and "L" command for pacman to change facing direction, "M" command for pacman to move
-    switch (currentMove) {
-      case "R":
-        turn(90);
-        break;
-      case "L":
-        turn(-90);
-        break;
-      case "M":
-        Location next = getNextMoveLocation();
-        if (canMove(next)) {
-          setLocation(next);
-          eatPill(next);
-        }
-        break;
-    }
-    propertyMoveIndex++;
-  }
+//
+//  private void moveInAutoMode() {
+//    Location closestPill = closestPillLocation();
+//    double oldDirection = getDirection();
+//    Location.CompassDirection compassDir =
+//            getLocation().get4CompassDirectionTo(closestPill);
+//    Location next = getLocation().getNeighbourLocation(compassDir);
+//    setDirection(compassDir);
+//    if (!isVisited(next) && canMove(next)) {
+//      setLocation(next);
+//    } else {
+//      // normal movement
+//      int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
+//      setDirection(oldDirection);
+//      turn(sign * 90);  // Try to turn left/right
+//      next = getNextMoveLocation();
+//      if (canMove(next)) {
+//        setLocation(next);
+//      } else {
+//        setDirection(oldDirection);
+//        next = getNextMoveLocation();
+//        if (canMove(next)) // Try to move forward
+//        {
+//          setLocation(next);
+//        } else {
+//          setDirection(oldDirection);
+//          turn(-sign * 90);  // Try to turn right/left
+//          next = getNextMoveLocation();
+//          if (canMove(next)) {
+//            setLocation(next);
+//          } else {
+//            setDirection(oldDirection);
+//            turn(180);  // Turn backward
+//            next = getNextMoveLocation();
+//            setLocation(next);
+//          }
+//        }
+//      }
+//    }
+//    eatPill(next);
+//    addVisitedList(next);
+//  }
+//
+//  // this method is used to choose the location which is closest to a remaining item
+//  // will be used in auto move mode, to help pacman automatically choose next step
+//  private Location closestPillLocation() {
+//    int currentDistance = 1000;
+//    Location currentLocation = null;
+//    int distanceToItem;
+//    List<Item> items = new ArrayList<>();
+//    items.addAll(game.getPills());
+//    items.addAll(game.getGoldPieces());
+//    for (Item item: items) {
+//      distanceToItem = item.getLocation().getDistanceTo(getLocation());
+//      if (distanceToItem < currentDistance) {
+//        currentLocation = item.getLocation();
+//        currentDistance = distanceToItem;
+//      }
+//    }
+//    return currentLocation;
+//  }
 
   // check whether the current location pacman stands in has an item, if so, different items have different effects
   private void eatPill(Location location) {
@@ -196,6 +163,11 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     }
     String title = "[PacMan in the Torusverse] Current score: " + score;
     gameGrid.setTitle(title);
+  }
+
+
+  public void setAuto(boolean auto) {
+    isAuto = auto;
   }
 
   public int getNbPills() {
