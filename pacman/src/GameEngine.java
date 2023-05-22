@@ -27,9 +27,13 @@ public class GameEngine extends GameGrid {
     private final static int KEY_PERIOD = 150;
     private final static String TITLE = "[PacMan in the Torusverse]";
     private final static boolean isNavigation = false;
+    private String mapDir;
+    private String currFile;
     private int seed = 30006;
     private boolean isAuto;
     private Game game;
+    private Controller controller;
+    private GGBackground background;
     protected PacActor pacActor;
     private ArrayList<Monster> trolls;
     private ArrayList<Monster> tx5s;
@@ -45,12 +49,14 @@ public class GameEngine extends GameGrid {
     private PortalPair darkGrayPortals;
 
     private Properties properties;
-    private final int SPEED_DOWN = 3;
+    private final int SPEED_DOWN = 10;
 
     public GameEngine(String propertiesPath, String mapDir, Controller controller) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
+        this.mapDir = mapDir;
+        this.controller = controller;
         // TODO: changed grid from PacManGameGrid to Grid
         File folder = new File(mapDir);
         String smallestFileName = null;
@@ -67,6 +73,7 @@ public class GameEngine extends GameGrid {
             }
         }
         if (smallestFileName != null) {
+            this.currFile = smallestFileName;
             String filename = mapDir+ "/" + smallestFileName;
             File map = new File(filename);
             grid = controller.loadFile(map);
@@ -104,8 +111,9 @@ public class GameEngine extends GameGrid {
 
             // Run game
             GGBackground bg = getBg();
-            drawGrid(bg);
-            runGame(bg);
+            this.background = bg;
+            drawGrid();
+            runGame();
         } else {
             grid = controller.getModel();
         }
@@ -209,7 +217,8 @@ public class GameEngine extends GameGrid {
     }
 
     // Check the status of the game and render relevant texts
-    private void runGame(GGBackground bg) {
+    private void runGame() {
+        GGBackground bg = this.background;
         doRun();
         show();
         do {
@@ -229,15 +238,26 @@ public class GameEngine extends GameGrid {
             title = "GAME OVER";
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
-            bg.setPaintColor(Color.yellow);
-            title = "YOU WIN";
+            String nextFile = findFile(this.currFile, this.mapDir);
+            if (nextFile != null) {
+                String filename = mapDir+ "/" + nextFile;
+                File map = new File(filename);
+                this.grid = this.controller.loadFile(map);
+                GGBackground background = getBg();
+                this.background = background;
+                System.out.println("is win next level");
+            } else {
+                bg.setPaintColor(Color.yellow);
+                title = "YOU WIN";
+            }
         }
         setTitle(title);
         game.getGameCallback().endOfGame(title);
         doPause();
     }
 
-    public void drawGrid(GGBackground bg) {
+    public void drawGrid() {
+        GGBackground bg = this.background;
         Location location;
         int cellValue;
         bg.clear(Color.gray);
@@ -265,4 +285,30 @@ public class GameEngine extends GameGrid {
             bg.fillCircle(toPoint(item.getLocation()), 5);
         }
     }
+
+    public static String findFile(String currFile, String mapDir) {
+        File folder = new File(mapDir);
+        File[] files = folder.listFiles();
+        ArrayList<String> fileNames = new ArrayList<>();
+
+        for (File file : files) {
+            if (file.isFile() && file.getName().matches("\\d.*")) {
+                fileNames.add(file.getName());
+            }
+        }
+
+        fileNames.sort((fileName1, fileName2) -> {
+            int num1 = Integer.parseInt(fileName1.replaceAll("\\D+", ""));
+            int num2 = Integer.parseInt(fileName2.replaceAll("\\D+", ""));
+            return Integer.compare(num1, num2);
+        });
+
+        int i = fileNames.indexOf(currFile);
+        if (i >= 0 && i < fileNames.size() - 1) {
+            return fileNames.get(i + 1);
+        } else {
+            return null;
+        }
+    }
+
 }

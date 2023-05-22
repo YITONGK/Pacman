@@ -247,6 +247,7 @@ public class Controller implements ActionListener, GUIInformation {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			processFile(mPath, builder);
+			System.out.println("building");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
