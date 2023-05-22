@@ -21,6 +21,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.aplu.jgamegrid.GameGrid;
+import ch.aplu.jgamegrid.Location;
 import matachi.mapeditor.grid.Camera;
 import matachi.mapeditor.grid.Grid;
 import matachi.mapeditor.grid.GridCamera;
@@ -34,7 +35,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import src.GameEngine;
-import src.PortalPair;
+import src.*;
 
 /**
  * Controller of the application.
@@ -62,8 +63,8 @@ public class Controller implements ActionListener, GUIInformation {
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
 
-	// TODO: Added model array to store all models from folder
-	private ArrayList<Grid> fileModels = new ArrayList<>();
+	//TODO: Added an arraylist of folder models
+	private ArrayList<Grid> folderModels;
 
 	/**
 	 * Construct the controller.
@@ -75,7 +76,10 @@ public class Controller implements ActionListener, GUIInformation {
 
 	public void init(int width, int height) {
 		this.tiles = TileManager.getTilesFromFolder("2D-Map-Editor-master/data/");
+		// Used for when editor is started with a map as argument
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
+		// Used for when editor is started with a folder as argument
+		this.folderModels =  new ArrayList<>();
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);
 
@@ -209,6 +213,7 @@ public class Controller implements ActionListener, GUIInformation {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			JFileChooser chooser = new JFileChooser();
+			// TODO: Allow both files and folders to be opened
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			File selectedFile;
 			BufferedReader in;
@@ -217,14 +222,13 @@ public class Controller implements ActionListener, GUIInformation {
 			chooser.setCurrentDirectory(workingDirectory);
 
 			int returnVal = chooser.showOpenDialog(null);
-			Document document;
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				selectedFile = chooser.getSelectedFile();
 				if (selectedFile.isFile()){
 					processFile(selectedFile, builder);
 				}
 				else if (selectedFile.isDirectory()){
-//					processFolder();
+					processFolder(selectedFile, builder);
 				}
 			}
 		} catch (Exception e) {
@@ -236,8 +240,18 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * NEWLY ADDED: Function to process folder
 	 */
-	private void processFolder(File folder){
-
+	private void processFolder(File folder, SAXBuilder builder){
+		ArrayList<File> mapFiles = new ArrayList<>();
+		Grid fileModel;
+		if (gameChecker(folder, mapFiles)){
+			for (File mapFile: mapFiles){
+				fileModel = processFile(mapFile, builder);
+				folderModels.add(fileModel);
+			}
+		}
+		else {
+			// TODO: make game return to edit mode
+		}
 	}
 
 	/**
@@ -245,7 +259,7 @@ public class Controller implements ActionListener, GUIInformation {
 	 * 1. at least one correctly named map file in the folder
 	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
 	 */
-	private boolean gameChecker(File folder){
+	private boolean gameChecker(File folder, ArrayList<File> mapFiles){
 		File[] files = folder.listFiles();
 		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
 		char firstChar;
@@ -265,6 +279,8 @@ public class Controller implements ActionListener, GUIInformation {
 							ArrayList<String> names = new ArrayList<>();
 							names.add(files[i].getName());
 							nameHashMap.put(nameNum, names);
+							// Add any valid map files to our arraylist
+							mapFiles.add(files[i]);
 						}
 						else {
 							nameHashMap.get(nameNum).add(files[i].getName());
@@ -289,9 +305,12 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * NEWLY ADDED: Function to process file
 	 */
-	private void processFile(File selectedFile, SAXBuilder builder){
+	private Grid processFile(File selectedFile, SAXBuilder builder){
 
 		Document document;
+		// TODO: Make a deep copy and return
+		Grid modelCopy = new GridModel(gridWith, gridHeight, tiles.get(0).getCharacter());
+
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
@@ -344,6 +363,7 @@ public class Controller implements ActionListener, GUIInformation {
 							tileNr = '0';
 
 						model.setTile(x, y, tileNr);
+						modelCopy.setTile(x, y, tileNr);
 					}
 				}
 				String mapString = model.getMapAsString();
@@ -353,6 +373,7 @@ public class Controller implements ActionListener, GUIInformation {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		return modelCopy;
 	}
 
 	/**
@@ -366,10 +387,11 @@ public class Controller implements ActionListener, GUIInformation {
 
 	// TODO: Added Level Checking logic
 
-	public boolean levelChecker(){
+	public boolean levelChecker(File file){
 		int countPacMan = 0;
 		int countGold = 0, countPill = 0;
 		char tileChar;
+		Location location;
 		PortalPair white = new PortalPair();
 		PortalPair yellow = new PortalPair();
 		PortalPair darkGold = new PortalPair();
@@ -377,6 +399,7 @@ public class Controller implements ActionListener, GUIInformation {
 		for (int y = 0; y < model.getHeight(); y++){
 			for (int x = 0; x < model.getWidth(); x++){
 				tileChar = model.getTile(x, y);
+				location = new Location(x, y);
 				if (tileChar == 'c'){
 					countPill++;
 				}
@@ -387,20 +410,45 @@ public class Controller implements ActionListener, GUIInformation {
 					countGold++;
 				}
 				else if (tileChar == 'i'){
-					white.addPortal();
+					white.addPortal(new Item(ItemType.WHITE_PORTAL.getImage(), location));
 				}
 				else if (tileChar == 'j'){
-					yellow.addPortal();
+					yellow.addPortal(new Item(ItemType.YELLOW_PORTAL.getImage(), location));
 				}
 				else if (tileChar == 'k'){
-					darkGold.addPortal();
+					darkGold.addPortal(new Item(ItemType.DARK_GOLD_PORTAL.getImage(), location));
 				}
 				else if (tileChar == 'l'){
-					darkGray.addPortal();
+					darkGray.addPortal(new Item(ItemType.DARK_GRAY_PORTAL.getImage(), location));
 				}
 			}
 		}
-		// MISSING: level checking (4d) logic
+		if (countPacMan == 0){
+			// TODO: Add log statement for no pacman
+			//  e.g., [Level 2mapname.xml – no start for PacMan]
+		}
+		if (countPacMan > 1){
+			// TODO: Add log statement for more than one Pacman
+			//  e.g., [Level 5_levelname.xml – more than one start for Pacman: (3,7); (8, 1); (5, 2)]
+		}
+		if (!white.checkPortalTypeIsValid()){
+			// TODO: Add log statement for invalid number of white portals
+			//  e.g.,[Level 1_mapname.xml – portal White count is not 2: (2,3); (6,7); (1,8)
+		}
+		if (!yellow.checkPortalTypeIsValid()){
+			// TODO: Add log statement for invalid number of yellow portals
+		}
+		if (!darkGold.checkPortalTypeIsValid()){
+			// TODO: Add log statement for invalid number of dark gold portals
+		}
+		if (!darkGray.checkPortalTypeIsValid()){
+			// TODO: Add log statement for invalid number of dark gray portals
+		}
+		if (countPill + countGold < 2){
+			// TODO: Add log statement for invalid number of gold + pill
+		}
+		// TODO MISSING: level checking (4d) logic (each gold is accessible accounting for portals)
+
 		return countPacMan == 1 && countGold >= 2 && countPill >= 2 &&
 				checkPortalTypeIsValid(white, yellow, darkGold, darkGray);
 	}
