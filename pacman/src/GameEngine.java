@@ -312,7 +312,7 @@ public class GameEngine extends GameGrid {
         darkGrayPortals = new PortalPair();
         setupPillAndItemsLocations();
         game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
-        pacActor = new PacActor(game, isAuto, seed);
+        pacActor = new PacActor(game, grid, isAuto);
         setupPacActorAttributes();
         trolls = new ArrayList<>();
         tx5s = new ArrayList<>();

@@ -1,22 +1,17 @@
 package src;
 
 import ch.aplu.jgamegrid.Location;
+import matachi.mapeditor.grid.Grid;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class DirectedApproach implements MoveStrategy {
 
-    protected Random randomiser = new Random();
-    private Game game;
-    List<Item> items = new ArrayList<>();
+    private List<Item> items = new ArrayList<>();
+    private Location target = null;
+    private List<Location> path;
 
-
-    public DirectedApproach(int seed, Game game) {
-        randomiser.setSeed(seed);
-        this.game = game;
+    public DirectedApproach(Game game) {
         items.addAll(game.getPills());
         items.addAll(game.getGoldPieces());
     }
@@ -28,21 +23,43 @@ public class DirectedApproach implements MoveStrategy {
         int currentDistance = 1000;
         Location currentLocation = null;
         int distanceToItem;
+        Item closestItem = null;
+        System.out.println("===================");
         for (Item item : items) {
-            if (item.getIdVisible() == -1) {
-                distanceToItem = item.getLocation().getDistanceTo(pacman.getLocation());
-                if (distanceToItem < currentDistance) {
-                    currentLocation = item.getLocation();
-                    currentDistance = distanceToItem;
-                }
+            distanceToItem = item.getLocation().getDistanceTo(pacman.getLocation());
+            if (distanceToItem < currentDistance) {
+                currentLocation = item.getLocation();
+                currentDistance = distanceToItem;
+                closestItem = item;
             }
         }
+        items.remove(closestItem);
         return currentLocation;
     }
 
-    public Location move(PacActor pacman, Game game) {
-        Location closestPill = closestPillLocation(pacman, game);
-        double oldDirection = pacman.getDirection();
+    public Location move(PacActor pacman, Game game, Grid grid) {
+        System.out.println("directed approach");
+        if (target == null || path.size() == 0) {
+            target = closestPillLocation(pacman, game);
+            System.out.println(target);
+            path = BFS.bfs(pacman.getLocation(), target, grid);
+            System.out.println(path.size());
+//            for (Location l: path) {
+//                System.out.println(l);
+//            }
+        }
+        Location next = path.remove(0);
+        if (next.equals(target)) {
+            target = null;
+            path.clear();
+        }
+        Location.CompassDirection compassDir = pacman.getLocation().get4CompassDirectionTo(next);
+        pacman.setDirection(compassDir);
+        return next;
+    }
+
+
+
 //        pacman.setDirection(oldDirection);
 //        Location next = pacman.getNextMoveLocation();
 //        ArrayList<Location> nextLocations = new ArrayList<>();
@@ -73,41 +90,41 @@ public class DirectedApproach implements MoveStrategy {
 //            next = nextLocations.get(0);
 //        }
 //        return next;
-        Location.CompassDirection compassDir =
-                pacman.getLocation().get4CompassDirectionTo(closestPill);
-        Location next = pacman.getLocation().getNeighbourLocation(compassDir);
-        pacman.setDirection(compassDir);
-        if (!pacman.isVisited(next) && pacman.canMove(next)) {
-            return next;
-        } else {
-            // normal movement
-            int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
-            pacman.setDirection(oldDirection);
-            pacman.turn(sign * 90);  // Try to turn left/right
-            next = pacman.getNextMoveLocation();
-            if (pacman.canMove(next)) {
-                return next;
-            } else {
-                pacman.setDirection(oldDirection);
-                next = pacman.getNextMoveLocation();
-                if (pacman.canMove(next)) // Try to move forward
-                {
-                    return next;
-                } else {
-                    pacman.setDirection(oldDirection);
-                    pacman.turn(-sign * 90);  // Try to turn right/left
-                    next = pacman.getNextMoveLocation();
-                    if (pacman.canMove(next)) {
-                        return next;
-                    } else {
-                        pacman.setDirection(oldDirection);
-                        pacman.turn(180);  // Turn backward
-                        next = pacman.getNextMoveLocation();
-                        return next;
-                    }
-                }
-            }
-        }
-    }
+//        Location.CompassDirection compassDir =
+//                pacman.getLocation().get4CompassDirectionTo(closestPill);
+//        Location next = pacman.getLocation().getNeighbourLocation(compassDir);
+//        pacman.setDirection(compassDir);
+//        if (!pacman.isVisited(next) && pacman.canMove(next)) {
+//            return next;
+//        } else {
+//            // normal movement
+//            int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
+//            pacman.setDirection(oldDirection);
+//            pacman.turn(sign * 90);  // Try to turn left/right
+//            next = pacman.getNextMoveLocation();
+//            if (pacman.canMove(next)) {
+//                return next;
+//            } else {
+//                pacman.setDirection(oldDirection);
+//                next = pacman.getNextMoveLocation();
+//                if (pacman.canMove(next)) // Try to move forward
+//                {
+//                    return next;
+//                } else {
+//                    pacman.setDirection(oldDirection);
+//                    pacman.turn(-sign * 90);  // Try to turn right/left
+//                    next = pacman.getNextMoveLocation();
+//                    if (pacman.canMove(next)) {
+//                        return next;
+//                    } else {
+//                        pacman.setDirection(oldDirection);
+//                        pacman.turn(180);  // Turn backward
+//                        next = pacman.getNextMoveLocation();
+//                        return next;
+//                    }
+//                }
+//            }
+//        }
+//    }
 
 }

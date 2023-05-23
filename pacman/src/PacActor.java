@@ -3,6 +3,8 @@
 package src;
 
 import ch.aplu.jgamegrid.*;
+import matachi.mapeditor.grid.Grid;
+
 import java.awt.event.KeyEvent;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -15,15 +17,15 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
   private int nbPills = 0;
   private int score = 0;
   private boolean isAuto;
-  private int seed;
+  private Grid grid;
   private MoveStrategy moveStrategy;
 
-  public PacActor(Game game, boolean isAuto, int seed) {
+  public PacActor(Game game, Grid grid, boolean isAuto) {
     super(game);
+    this.grid = grid;
     this.isAuto = isAuto;
-    this.seed = seed;
     if (isAuto) {
-      moveStrategy = new DirectedApproach(this.seed, game);
+      moveStrategy = new DirectedApproach(game);
     }
   }
 
@@ -33,7 +35,7 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     if (idSprite == nbSprites)
       idSprite = 0;
     if (isAuto) {
-      Location next = moveStrategy.move(this, game);
+      Location next = moveStrategy.move(this, this.game, this.grid);
       setLocation(next);
       eatPill(next);
       addVisitedList(next);
