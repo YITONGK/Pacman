@@ -35,7 +35,7 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     if (idSprite == nbSprites)
       idSprite = 0;
     if (isAuto) {
-      Location next = moveStrategy.move(this, this.game, this.grid);
+      Location next = moveStrategy.move(this, this.grid);
       setLocation(next);
       eatPill(next);
       addVisitedList(next);

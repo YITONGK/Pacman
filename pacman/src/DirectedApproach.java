@@ -19,7 +19,7 @@ public class DirectedApproach implements MoveStrategy {
 
     // this method is used to choose the location which is closest to a remaining item
     // will be used in auto move mode, to help pacman automatically choose next step
-    private Location closestPillLocation(PacActor pacman, Game game) {
+    private Location closestPillLocation(PacActor pacman) {
         int currentDistance = 1000;
         Location currentLocation = null;
         int distanceToItem;
@@ -36,10 +36,9 @@ public class DirectedApproach implements MoveStrategy {
         return currentLocation;
     }
 
-    public Location move(PacActor pacman, Game game, Grid grid) {
-        System.out.println("directed approach");
+    public Location move(PacActor pacman, Grid grid) {
         if (target == null || path.size() == 0) {
-            target = closestPillLocation(pacman, game);
+            target = closestPillLocation(pacman);
             path = BFS.bfs(pacman.getLocation(), target, grid);
 
         }
