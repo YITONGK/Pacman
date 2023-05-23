@@ -66,8 +66,8 @@ public class Controller implements ActionListener, GUIInformation {
 	private int gridHeight = Constants.MAP_HEIGHT;
 
 	//TODO: Added an arraylist of folder models
-	private ArrayList<File> sortedFile;
-	private File currFile;
+	private ArrayList<File> sortedFile = new ArrayList<>();
+	public File currFile = null;
 
 	/**
 	 * Construct the controller.
@@ -83,10 +83,8 @@ public class Controller implements ActionListener, GUIInformation {
 
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
 		// Used for when editor is started with a folder as argument
-		this.sortedFile =  new ArrayList<>();
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);
-		this.currFile = null;
 
 		grid = new GridView(this, camera, tiles); // Every tile is
 													// 30x30 pixels
@@ -116,7 +114,6 @@ public class Controller implements ActionListener, GUIInformation {
 		} else if (e.getActionCommand().equals("save")) {
 			saveFile();
 		} else if (e.getActionCommand().equals("load")) {
-//			System.out.println("laodlaood");
 			loadFile();
 		} else if (e.getActionCommand().equals("update")) {
 			updateGrid(gridWith, gridHeight);
@@ -314,7 +311,12 @@ public class Controller implements ActionListener, GUIInformation {
 
 	public Grid loadNextFile() {
 		int i = sortedFile.indexOf(currFile);
-		return loadFile(sortedFile.get(i + 1).getName());
+		if ((i + 1) < sortedFile.size()) {
+			return loadFile(sortedFile.get(i + 1).getPath());
+		} else {
+			return null;
+		}
+
 	}
 
 	/**
@@ -322,8 +324,9 @@ public class Controller implements ActionListener, GUIInformation {
 	 */
 	private ArrayList<File> processFolder(File folder, SAXBuilder builder){
 
-		ArrayList<File> mapFiles = new ArrayList<>();
-		if (!gameChecker(folder, mapFiles)){
+		ArrayList<File> mapFiles = gameChecker(folder);
+
+		if (mapFiles == null){
 			return null;
 		}
 
@@ -344,7 +347,8 @@ public class Controller implements ActionListener, GUIInformation {
 	 * 1. at least one correctly named map file in the folder
 	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
 	 */
-	private boolean gameChecker(File folder, ArrayList<File> mapFiles){
+	private ArrayList<File> gameChecker(File folder){
+		ArrayList<File> mapFiles = new ArrayList<File>();
 		File[] files = folder.listFiles();
 		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
 		char firstChar;
@@ -386,16 +390,16 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 		boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
 		if (!status) {
-			System.out.println("game check failed");
+			return null;
 		}
-		return status;
+		return mapFiles;
 	}
 
 	/**
 	 * NEWLY ADDED: Function to process file
 	 */
 	private Grid processFile(File selectedFile, SAXBuilder builder){
-
+		this.currFile = selectedFile;
 		Document document;
 		// TODO: Make a deep copy and return
 		Grid modelCopy = new GridModel(gridWith, gridHeight, tiles.get(0).getCharacter());

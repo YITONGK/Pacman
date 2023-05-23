@@ -60,7 +60,6 @@ public class GameEngine extends GameGrid {
             grid = controller.getModel();
         } else {
             grid = controller.loadFile(mapArg);
-            System.out.println(grid);
         }
         if (grid != null) {
             seed = Integer.parseInt(properties.getProperty("seed"));
@@ -177,6 +176,7 @@ public class GameEngine extends GameGrid {
 
     // Check the status of the game and render relevant texts
     private void runGame() {
+
         GGBackground bg = this.background;
         doRun();
         show();
@@ -197,7 +197,7 @@ public class GameEngine extends GameGrid {
             title = "GAME OVER";
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
-            String nextFile = findFile(this.currFile, this.mapDir);
+
             grid = controller.loadNextFile();
             if (grid != null) {
                 removeAllActors();
