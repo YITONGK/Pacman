@@ -32,6 +32,7 @@ public class GameEngine extends GameGrid {
     private Game game;
     private Controller controller;
     private GGBackground background;
+    private ArrayList<File> sortedFile;
     protected PacActor pacActor;
     private ArrayList<Monster> trolls;
     private ArrayList<Monster> tx5s;
@@ -49,53 +50,31 @@ public class GameEngine extends GameGrid {
     private Properties properties;
     private final int SPEED_DOWN = 10;
 
-    public GameEngine(String propertiesPath, String mapDir, Controller controller) {
+    public GameEngine(String propertiesPath, String mapArg, Controller controller) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
-        this.mapDir = mapDir;
         this.controller = controller;
-        // TODO: changed grid from PacManGameGrid to Grid
-        File folder = new File(mapDir);
-        String smallestFileName = null;
-        int smallestNumber = Integer.MAX_VALUE;
-        File[] files = folder.listFiles();
-        for (File file : files) {
-            if (file.isFile() && file.getName().matches("\\d.*")) {
-                String fileName = file.getName();
-                int number = Integer.parseInt(fileName.replaceAll("\\D+", ""));
-                if (number < smallestNumber) {
-                    smallestNumber = number;
-                    smallestFileName = fileName;
-                }
-            }
+        this.mapDir = mapArg;
+        if (mapArg == null) {
+            grid = controller.getModel();
+        } else {
+            grid = controller.loadFile(mapArg);
+            System.out.println(grid);
         }
-        if (smallestFileName != null) {
-            this.currFile = smallestFileName;
-            String filename = mapDir+ "/" + smallestFileName;
-            File map = new File(filename);
-            grid = controller.loadFile(map);
-            LevelChecker levelChecker = LevelChecker.getInstance();
-            boolean isValid = levelChecker.checkLevel(map, this.grid);
-            if (!isValid) {
-                return;
-            }
+        if (grid != null) {
             seed = Integer.parseInt(properties.getProperty("seed"));
             isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
             setSimulationPeriod(SIMULATION_PERIOD);
             setTitle(TITLE);
-
             // Set up game actors
             game = new Game(nbHorzCells, nbVertCells);
             setUpAll();
-
             // Run game
             GGBackground bg = getBg();
             this.background = bg;
             drawGrid();
             runGame();
-        } else {
-            grid = controller.getModel();
         }
     }
 
@@ -219,18 +198,9 @@ public class GameEngine extends GameGrid {
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
             String nextFile = findFile(this.currFile, this.mapDir);
-            if (nextFile != null) {
-                this.currFile = nextFile;
+            grid = controller.loadNextFile();
+            if (grid != null) {
                 removeAllActors();
-                String filename = mapDir+ "/" + nextFile;
-                File map = new File(filename);
-                this.grid = this.controller.loadFile(map);
-                LevelChecker levelChecker = LevelChecker.getInstance();
-                boolean isValid = levelChecker.checkLevel(map, this.grid);
-                if (!isValid) {
-                    doPause();
-                    return;
-                }
                 this.game = new Game(nbHorzCells, nbVertCells);
                 setUpAll();
                 this.background = getBg();
