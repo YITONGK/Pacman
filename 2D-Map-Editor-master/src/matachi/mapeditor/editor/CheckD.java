@@ -64,7 +64,7 @@ public class CheckD extends LevelCheckComponent{
                             locationListToString(inaccessiblePills) + "\n";
                 }
                 if (!allGoldsAccessible) {
-                    output = output + "\nLevel " + file.getName() + ".xml - Gold not accessible: " +
+                    output = output + "Level " + file.getName() + ".xml - Gold not accessible: " +
                             locationListToString(inaccessibleGolds) + "\n";
                 }
             }
