@@ -216,7 +216,7 @@ public class GameEngine extends GameGrid {
         if (game.isLost()) {
             bg.setPaintColor(Color.red);
             title = "GAME OVER";
-            addActor(new Actor("GameFolder/sprites/explosion3.gif"), loc);
+            addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
             String nextFile = findFile(this.currFile, this.mapDir);
             if (nextFile != null) {
