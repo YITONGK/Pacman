@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ch.aplu.jgamegrid.GGBackground;
 import ch.aplu.jgamegrid.GameGrid;
 import ch.aplu.jgamegrid.Location;
 import matachi.mapeditor.grid.Camera;
@@ -64,7 +66,8 @@ public class Controller implements ActionListener, GUIInformation {
 	private int gridHeight = Constants.MAP_HEIGHT;
 
 	//TODO: Added an arraylist of folder models
-	private ArrayList<Grid> folderModels;
+	private ArrayList<File> sortedFile;
+	private File currFile;
 
 	/**
 	 * Construct the controller.
@@ -80,9 +83,10 @@ public class Controller implements ActionListener, GUIInformation {
 
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
 		// Used for when editor is started with a folder as argument
-		this.folderModels =  new ArrayList<>();
+		this.sortedFile =  new ArrayList<>();
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);
+		this.currFile = null;
 
 		grid = new GridView(this, camera, tiles); // Every tile is
 													// 30x30 pixels
@@ -117,7 +121,17 @@ public class Controller implements ActionListener, GUIInformation {
 		} else if (e.getActionCommand().equals("update")) {
 			updateGrid(gridWith, gridHeight);
 		} else if (e.getActionCommand().equals("start_game")) {
+			startUp(null);
 		}
+	}
+
+	public void startUp(String path) {
+		if (path == null) {
+			loadFile();
+		} else {
+			loadFile(path);
+		}
+
 	}
 
 	public void updateGrid(int width, int height) {
@@ -214,12 +228,11 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-	// TODO: added return value (from void to Grid)
+	// No argument: user select file or directory
 	public Grid loadFile() {
 		SAXBuilder builder = new SAXBuilder();
 		try {
 			JFileChooser chooser = new JFileChooser();
-			// TODO: Allow both files and folders to be opened
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			File selectedFile;
 			BufferedReader in;
@@ -231,10 +244,30 @@ public class Controller implements ActionListener, GUIInformation {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				selectedFile = chooser.getSelectedFile();
 				if (selectedFile.isFile()){
-					processFile(selectedFile, builder);
+					currFile = selectedFile;
+					model = processFile(currFile, builder);
+					LevelChecker levelChecker = LevelChecker.getInstance();
+					boolean isValid = levelChecker.checkLevel(currFile, model);
+					if (!isValid) {
+						currFile = null;
+						model = null;
+						return null;
+					}
 				}
 				else if (selectedFile.isDirectory()){
-					processFolder(selectedFile, builder);
+					if (processFolder(selectedFile, builder) != null) {
+						currFile = sortedFile.get(0);
+						model = processFile(currFile, builder);
+						LevelChecker levelChecker = LevelChecker.getInstance();
+						boolean isValid = levelChecker.checkLevel(currFile, model);
+						if (!isValid) {
+							currFile = null;
+							model = null;
+							return null;
+						}
+					} else {
+						model = getModel();
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -243,31 +276,67 @@ public class Controller implements ActionListener, GUIInformation {
 		return model;
 	}
 
-	public Grid loadFile(File mPath) {
+	// with argument: skip user selecting
+	public Grid loadFile(String pathStr) {
+		File mPath = new File(pathStr);
 		SAXBuilder builder = new SAXBuilder();
 		try {
-			processFile(mPath, builder);
+			if (mPath.isFile()){
+				currFile = mPath;
+				model = processFile(currFile, builder);
+				LevelChecker levelChecker = LevelChecker.getInstance();
+				boolean isValid = levelChecker.checkLevel(mPath, model);
+				if (!isValid) {
+					currFile = null;
+					model = null;
+					return null;
+				}
+			} else if (mPath.isDirectory()){
+				if (processFolder(mPath, builder) != null) {
+					currFile = sortedFile.get(0);
+					model = processFile(currFile, builder);
+					LevelChecker levelChecker = LevelChecker.getInstance();
+					boolean isValid = levelChecker.checkLevel(mPath, model);
+					if (!isValid) {
+						currFile = null;
+						model = null;
+						return null;
+					}
+				} else {
+					model = getModel();
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return model;
+	}
+
+	public Grid loadNextFile() {
+		int i = sortedFile.indexOf(currFile);
+		return loadFile(sortedFile.get(i + 1).getName());
 	}
 
 	/**
 	 * NEWLY ADDED: Function to process folder
 	 */
-	private void processFolder(File folder, SAXBuilder builder){
+	private ArrayList<File> processFolder(File folder, SAXBuilder builder){
+
 		ArrayList<File> mapFiles = new ArrayList<>();
-		Grid fileModel;
-		if (gameChecker(folder, mapFiles)){
-			for (File mapFile: mapFiles){
-				fileModel = processFile(mapFile, builder);
-				folderModels.add(fileModel);
-			}
+		if (!gameChecker(folder, mapFiles)){
+			return null;
 		}
-		else {
-			// TODO: make game return to edit mode
+
+		mapFiles.sort((file1, file2) -> {
+			int num1 = Integer.parseInt(file1.getName().replaceAll("\\D+", ""));
+			int num2 = Integer.parseInt(file2.getName().replaceAll("\\D+", ""));
+			return Integer.compare(num1, num2);
+		});
+
+		for (File mfile : mapFiles) {
+			sortedFile.add(mfile);
 		}
+		return sortedFile;
 	}
 
 	/**
@@ -315,7 +384,11 @@ public class Controller implements ActionListener, GUIInformation {
 				// TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
 			}
 		}
-		return startsWithUniqueNumbers && countValidFiles >= 1;
+		boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
+		if (!status) {
+			System.out.println("game check failed");
+		}
+		return status;
 	}
 
 	/**
