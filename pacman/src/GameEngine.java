@@ -112,13 +112,15 @@ public class GameEngine extends GameGrid {
                     addActor(pacActor, pacLocation);
                 }
                 if (a == 'g') {
-                    trolls.add(new Troll(game));
+                    Monster newTroll = MonsterFactory.getInstance().createMonster(a, game);
+                    trolls.add(newTroll);
                     trollLocation = location;
                     addActor(trolls.get(num_trolls), trollLocation, Location.NORTH);
                     num_trolls ++;
                 }
                 if (a == 'h') {
-                    tx5s.add(new TX5(game));
+                    Monster newTX5 = MonsterFactory.getInstance().createMonster(a, game);
+                    tx5s.add(newTX5);
                     tx5Location = location;
                     addActor(tx5s.get(num_tx5s), tx5Location, Location.NORTH);
                     num_tx5s ++;
