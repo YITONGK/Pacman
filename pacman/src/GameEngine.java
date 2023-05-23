@@ -4,7 +4,6 @@ package src;
 
 import ch.aplu.jgamegrid.*;
 import matachi.mapeditor.editor.Controller;
-import matachi.mapeditor.editor.LevelChecker;
 import matachi.mapeditor.grid.Grid;
 
 import java.awt.*;
@@ -48,7 +47,7 @@ public class GameEngine extends GameGrid {
     private PortalPair darkGrayPortals;
 
     private Properties properties;
-    private final int SPEED_DOWN = 10;
+    private final int SPEED_DOWN = 3;
 
     public GameEngine(String propertiesPath, String mapArg, Controller controller) {
         // Setup game engine

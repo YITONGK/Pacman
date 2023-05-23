@@ -9,10 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelCheckerComposite extends LevelCheckComponent{
+    private static LevelCheckerComposite instance;
     private List<LevelCheckComponent> levelCheckers;
 
-    public LevelCheckerComposite () {
+    private LevelCheckerComposite () {
         levelCheckers = new ArrayList<>();
+        addLevelChecker(new CheckA());
+        addLevelChecker(new CheckB());
+        addLevelChecker(new CheckC());
+        addLevelChecker(new CheckD());
+    }
+
+    public static LevelCheckerComposite getInstance(){
+        if (instance == null) {
+            instance = new LevelCheckerComposite();
+        }
+        return instance;
     }
 
     public void addLevelChecker(LevelCheckComponent levelChecker) {
@@ -29,29 +41,6 @@ public class LevelCheckerComposite extends LevelCheckComponent{
         }
         return output;
     }
-//    LevelCheckerComposite levelChecker = new LevelCheckerComposite();
-//            levelChecker.addLevelChecker(new CheckA());
-//            levelChecker.addLevelChecker(new CheckB());
-//            levelChecker.addLevelChecker(new CheckC());
-//            levelChecker.addLevelChecker(new CheckD());
-//    String log = levelChecker.checkLevel(map, this.grid);
-//            if (log.length() != 0) {
-//        FileWriter fileWriter = null;
-//        try {
-//            fileWriter = new FileWriter(new File("log.txt"));
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//        try {
-//            fileWriter.write(log);
-//            fileWriter.write("\n");
-//            fileWriter.flush();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return;
-//    }
-
 }
 
 

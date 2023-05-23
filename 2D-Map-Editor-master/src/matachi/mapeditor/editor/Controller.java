@@ -68,7 +68,6 @@ public class Controller implements ActionListener, GUIInformation {
 	//TODO: Added an arraylist of folder models
 	private ArrayList<File> sortedFile = new ArrayList<>();
 	public File currFile = null;
-	LevelCheckerComposite levelChecker;
 	FileWriter fileWriter = null;
 
 	/**
@@ -76,11 +75,11 @@ public class Controller implements ActionListener, GUIInformation {
 	 */
 	public Controller() {
 		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
-		levelChecker = new LevelCheckerComposite();
-		levelChecker.addLevelChecker(new CheckA());
-		levelChecker.addLevelChecker(new CheckB());
-		levelChecker.addLevelChecker(new CheckC());
-		levelChecker.addLevelChecker(new CheckD());
+//		levelChecker = new LevelCheckerComposite();
+//		levelChecker.addLevelChecker(new CheckA());
+//		levelChecker.addLevelChecker(new CheckB());
+//		levelChecker.addLevelChecker(new CheckC());
+//		levelChecker.addLevelChecker(new CheckD());
 //		try {
 //            fileWriter = new FileWriter(new File("log.txt"));
 //        } catch (IOException ex) {
@@ -254,7 +253,7 @@ public class Controller implements ActionListener, GUIInformation {
 				if (selectedFile.isFile()){
 					currFile = selectedFile;
 					model = processFile(currFile, builder);
-					String log = levelChecker.checkLevel(currFile, model);
+					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 					if (log.length() != 0) {
 						fileWriter = new FileWriter(new File("log.txt"));
 						currFile = null;
@@ -267,7 +266,7 @@ public class Controller implements ActionListener, GUIInformation {
 					if (processFolder(selectedFile, builder) != null) {
 						currFile = sortedFile.get(0);
 						model = processFile(currFile, builder);
-						String log = levelChecker.checkLevel(currFile, model);
+						String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 						if (log.length() != 0) {
 							fileWriter = new FileWriter(new File("log.txt"));
 							currFile = null;
@@ -294,7 +293,7 @@ public class Controller implements ActionListener, GUIInformation {
 			if (mPath.isFile()){
 				currFile = mPath;
 				model = processFile(currFile, builder);
-				String log = levelChecker.checkLevel(currFile, model);
+				String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 				if (log.length() != 0) {
 					fileWriter = new FileWriter(new File("log.txt"));
 					currFile = null;
@@ -306,7 +305,7 @@ public class Controller implements ActionListener, GUIInformation {
 				if (processFolder(mPath, builder) != null) {
 					currFile = sortedFile.get(0);
 					model = processFile(currFile, builder);
-					String log = levelChecker.checkLevel(currFile, model);
+					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 					if (log.length() != 0) {
 						fileWriter = new FileWriter(new File("log.txt"));
 						currFile = null;
@@ -339,7 +338,7 @@ public class Controller implements ActionListener, GUIInformation {
 	 */
 	private ArrayList<File> processFolder(File folder, SAXBuilder builder){
 
-		ArrayList<File> mapFiles = gameChecker(folder);
+		ArrayList<File> mapFiles = GameChecker.getInstance().checkGame(folder);
 
 		if (mapFiles == null){
 			return null;
@@ -357,58 +356,58 @@ public class Controller implements ActionListener, GUIInformation {
 		return sortedFile;
 	}
 
-	/**
-	 * NEWLY ADDED: Function to check if folder is valid (section 2.2.4). Checks following:
-	 * 1. at least one correctly named map file in the folder
-	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
-	 */
-	private ArrayList<File> gameChecker(File folder){
-		ArrayList<File> mapFiles = new ArrayList<File>();
-		File[] files = folder.listFiles();
-		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
-		char firstChar;
-		int nameNum, countValidFiles = 0;
-		boolean startsWithUniqueNumbers = true;
-
-		// Folder must contain contents to be valid
-		if (files != null){
-			for (int i = 0; i < files.length; i++){
-				// We only use folder contents which are files
-				if (files[i].isFile()){
-					firstChar = files[i].getName().charAt(0);
-					if (Character.isDigit(firstChar)){
-						nameNum = Character.getNumericValue(firstChar);
-						// If a particular number has not been used for a map file name
-						if (!nameHashMap.containsKey(nameNum)) {
-							ArrayList<String> names = new ArrayList<>();
-							names.add(files[i].getName());
-							nameHashMap.put(nameNum, names);
-							// Add any valid map files to our arraylist
-							mapFiles.add(files[i]);
-						}
-						else {
-							nameHashMap.get(nameNum).add(files[i].getName());
-						}
-						countValidFiles++;
-					}
-				}
-			}
-		}
-		if (countValidFiles == 0){
-			// TODO: print error to log (e.g., [Game foldername – no maps found])
-		}
-		for (Integer key: nameHashMap.keySet()){
-			if (nameHashMap.get(key).size() > 1){
-				startsWithUniqueNumbers = false;
-				// TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
-			}
-		}
-		boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
-		if (!status) {
-			return null;
-		}
-		return mapFiles;
-	}
+//	/**
+//	 * NEWLY ADDED: Function to check if folder is valid (section 2.2.4). Checks following:
+//	 * 1. at least one correctly named map file in the folder
+//	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
+//	 */
+//	private ArrayList<File> gameChecker(File folder){
+//		ArrayList<File> mapFiles = new ArrayList<File>();
+//		File[] files = folder.listFiles();
+//		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
+//		char firstChar;
+//		int nameNum, countValidFiles = 0;
+//		boolean startsWithUniqueNumbers = true;
+//
+//		// Folder must contain contents to be valid
+//		if (files != null){
+//			for (int i = 0; i < files.length; i++){
+//				// We only use folder contents which are files
+//				if (files[i].isFile()){
+//					firstChar = files[i].getName().charAt(0);
+//					if (Character.isDigit(firstChar)){
+//						nameNum = Character.getNumericValue(firstChar);
+//						// If a particular number has not been used for a map file name
+//						if (!nameHashMap.containsKey(nameNum)) {
+//							ArrayList<String> names = new ArrayList<>();
+//							names.add(files[i].getName());
+//							nameHashMap.put(nameNum, names);
+//							// Add any valid map files to our arraylist
+//							mapFiles.add(files[i]);
+//						}
+//						else {
+//							nameHashMap.get(nameNum).add(files[i].getName());
+//						}
+//						countValidFiles++;
+//					}
+//				}
+//			}
+//		}
+//		if (countValidFiles == 0){
+//			// TODO: print error to log (e.g., [Game foldername – no maps found])
+//		}
+//		for (Integer key: nameHashMap.keySet()){
+//			if (nameHashMap.get(key).size() > 1){
+//				startsWithUniqueNumbers = false;
+//				// TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
+//			}
+//		}
+//		boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
+//		if (!status) {
+//			return null;
+//		}
+//		return mapFiles;
+//	}
 
 	/**
 	 * NEWLY ADDED: Function to process file
@@ -495,7 +494,6 @@ public class Controller implements ActionListener, GUIInformation {
 	public void writeString(String str) {
 		try {
 			fileWriter.write(str);
-			fileWriter.write("\n");
 			fileWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

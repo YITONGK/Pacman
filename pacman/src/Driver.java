@@ -8,7 +8,7 @@ import java.util.Properties;
 
 public class Driver {
     public static final String GMAP_PATH = "pacman/TestFolder";
-    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test5.properties";
+    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test4.properties";
 
 
     /**
