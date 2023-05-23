@@ -8,11 +8,16 @@ import src.ItemType;
 import src.PortalPair;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class LevelChecker {
 
     private static LevelChecker instance;
+
+    private String logFilePath = "Log.txt";
+    private FileWriter fileWriter = null;
 
     private LevelChecker(){
     }
@@ -25,6 +30,13 @@ public class LevelChecker {
     }
 
     public boolean checkLevel(File file, Grid model){
+
+        try {
+            fileWriter = new FileWriter(new File(logFilePath));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
         int countPacMan = 0;
         int countGold = 0, countPill = 0;
         char tileChar;
@@ -76,37 +88,37 @@ public class LevelChecker {
         }
         // level check 4a
         if (countPacMan == 0){
-            System.out.println("Level " + file.getName() + ".xml - no start for PacMan");
+            writeString("Level " + file.getName() + ".xml - no start for PacMan");
         }
         if (countPacMan > 1){
-            System.out.println("Level " + file.getName() + ".xml - more than one start for Pacman: " +
+            writeString("Level " + file.getName() + ".xml - more than one start for Pacman: " +
                     locationListToString(pacmans));
         }
         // level check 4b
         if (!white.checkPortalTypeIsValid()){
-            System.out.println("Level " + file.getName() + ".xml – portal White count is not 2: " +
+            writeString("Level " + file.getName() + ".xml – portal White count is not 2: " +
                     locationListToString(whites));
         }
         if (!yellow.checkPortalTypeIsValid()){
-            System.out.println("Level " + file.getName() + ".xml – portal Yellow count is not 2: " +
+            writeString("Level " + file.getName() + ".xml – portal Yellow count is not 2: " +
                     locationListToString(yellows));
         }
         if (!darkGold.checkPortalTypeIsValid()){
-            System.out.println("Level " + file.getName() + ".xml – portal DarkGold count is not 2: " +
+            writeString("Level " + file.getName() + ".xml – portal DarkGold count is not 2: " +
                     locationListToString(darkGolds));
         }
         if (!darkGray.checkPortalTypeIsValid()){
-            System.out.println("Level " + file.getName() + ".xml – portal DarkGrey count is not 2: " +
+            writeString("Level " + file.getName() + ".xml – portal DarkGrey count is not 2: " +
                     locationListToString(darkGreys));
         }
         // level check 4c
         if (countPill + countGold < 2){
-            System.out.println("Level " + file.getName() + ".xml – less than 2 Gold and Pill");
+            writeString("Level " + file.getName() + ".xml – less than 2 Gold and Pill");
         }
         // level check 4d
         else {
-            // if pacman start point goes wrong, no need to check 4d
-            if (countPacMan != 1) {
+            // if pacman start point goes wrong or portal pairs are invalid, no need to check 4d
+            if (countPacMan != 1 || !(checkPortalTypeIsValid(white, yellow, darkGold, darkGray))) {
                 return false;
             }
             else {
@@ -131,11 +143,11 @@ public class LevelChecker {
                 // print log and return false
                 if (!allPillsAccessible || !allGoldsAccessible) {
                     if (!allPillsAccessible) {
-                        System.out.println("Level " + file.getName() + ".xml - Pill not accessible: " +
+                        writeString("Level " + file.getName() + ".xml - Pill not accessible: " +
                                 locationListToString(inaccessiblePills));
                     }
                     if (!allGoldsAccessible) {
-                        System.out.println("Level " + file.getName() + ".xml - Gold not accessible: " +
+                        writeString("Level " + file.getName() + ".xml - Gold not accessible: " +
                                 locationListToString(inaccessibleGolds));
                     }
                     return false;
@@ -163,6 +175,7 @@ public class LevelChecker {
             // in order to match log
             l.x += 1;
             l.y += 1;
+            // if l is the last element in locations, don't need to add "; " to the output string
             if (locations.indexOf(l) == locations.size() - 1) {
                 output = output.concat(l.toString());
             }
@@ -171,6 +184,16 @@ public class LevelChecker {
             }
         }
         return output;
+    }
+
+    public void writeString(String str) {
+        try {
+            fileWriter.write(str);
+            fileWriter.write("\n");
+            fileWriter.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void print2D(boolean[][] array) {

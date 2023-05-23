@@ -37,7 +37,6 @@ public class PortalPair {
      */
     public boolean checkPortalTypeIsValid(){
         return checkPortalCount();
-//        return checkPortalCount() && checkTwoDistinctTiles();
     }
 
     /**
@@ -47,20 +46,6 @@ public class PortalPair {
         return (countPortals == VALID_PAIR) || (countPortals == EMPTY_PAIR);
     }
 
-    /**
-     * Function to check that the two portals lie on two distinct tiles
-     */
-//    private boolean checkTwoDistinctTiles(){
-//        Item portal1 = portals.get(0);
-//        Item portal2 = portals.get(1);
-//        if (portal1.getLocation().equals(portal2.getLocation())){
-//            // Decrement number of portals since they are in the same location (i.e., does nothing)
-//            countPortals = countPortals - 1;
-//            portals.remove(portal2);
-//            return false;
-//        }
-//        return true;
-//    }
 
     /**
      * Function to transport PacMan to the other portal
@@ -98,24 +83,5 @@ public class PortalPair {
             movedOntoPortal = true;
         }
     }
-
-    public String locationsToString(){
-        String locations = "";
-        for (int i = 0; i < portals.size(); i++){
-            locations += portals.get(i).getLocation().toString();
-            if (i < portals.size() - 1){
-                locations += "; ";
-            }
-        }
-        return locations;
-    }
-
-//    public ArrayList<Item> getPortals() {
-//        return portals;
-//    }
-//
-//    public int getCountPortals() {
-//        return countPortals;
-//    }
 
 }

@@ -17,13 +17,13 @@ public abstract class MovableActor extends Actor {
 
     // this constructor is for pacActor
     public MovableActor(Game game) {
-        super(true, "sprites/pacpix.gif", nbSprites);
+        super(true, "GameFolder/sprites/pacpix.gif", nbSprites);
         this.game = game;
     }
 
     // this constructor is for monsters
     public MovableActor(Game game, MonsterType type){
-        super("sprites/" + type.getImageName());
+        super("GameFolder/sprites/" + type.getImageName());
         this.game = game;
     }
 
