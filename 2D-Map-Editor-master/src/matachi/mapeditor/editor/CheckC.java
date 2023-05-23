@@ -34,7 +34,7 @@ public class CheckC extends LevelCheckComponent{
             }
         }
         if (countPill + countGold < 2){
-            output = "Level " + file.getName() + ".xml – less than 2 Gold and Pill";
+            output = "Level " + file.getName() + ".xml – less than 2 Gold and Pill\n";
         }
         return output;
     }

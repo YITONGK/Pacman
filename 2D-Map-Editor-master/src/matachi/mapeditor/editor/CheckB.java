@@ -48,19 +48,19 @@ public class CheckB extends LevelCheckComponent{
         // level check 4b
         if (!white.checkPortalTypeIsValid()){
             output = output + "Level " + file.getName() + ".xml – portal White count is not 2: " +
-                    locationListToString(whites);
+                    locationListToString(whites) + "\n";
         }
         if (!yellow.checkPortalTypeIsValid()){
-            output = output + "\nLevel " + file.getName() + ".xml – portal Yellow count is not 2: " +
-                    locationListToString(yellows);
+            output = output + "Level " + file.getName() + ".xml – portal Yellow count is not 2: " +
+                    locationListToString(yellows) + "\n";
         }
         if (!darkGold.checkPortalTypeIsValid()){
-            output = output + "\nLevel " + file.getName() + ".xml – portal DarkGold count is not 2: " +
-                    locationListToString(darkGolds);
+            output = output + "Level " + file.getName() + ".xml – portal DarkGold count is not 2: " +
+                    locationListToString(darkGolds) + "\n";
         }
         if (!darkGray.checkPortalTypeIsValid()){
-            output = output + "\nLevel " + file.getName() + ".xml – portal DarkGrey count is not 2: " +
-                    locationListToString(darkGreys);
+            output = output + "Level " + file.getName() + ".xml – portal DarkGrey count is not 2: " +
+                    locationListToString(darkGreys) + "\n";
         }
         return output;
     }

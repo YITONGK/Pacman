@@ -27,11 +27,11 @@ public class CheckA extends LevelCheckComponent{
         }
         // level check 4a
         if (countPacMan == 0){
-            output =  "Level " + file.getName() + ".xml - no start for PacMan";
+            output =  "Level " + file.getName() + ".xml - no start for PacMan\n";
             return output;
         }
         if (countPacMan > 1){
-            output = "Level " + file.getName() + ".xml - more than one start for Pacman: " + locationListToString(pacmans);
+            output = "Level " + file.getName() + ".xml - more than one start for Pacman: " + locationListToString(pacmans) + "\n";
             return output;
         }
         return output;
