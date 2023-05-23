@@ -66,7 +66,7 @@ public class BFS {
         while (!queue.isEmpty()) {
             Location current = queue.poll();
             if (current.equals(target)) {
-                return constructPath(parentMap, target);
+                return constructPath(parentMap, current);
             }
             // check four adjacent locations
             for (int i = 0; i < 4; i ++) {
@@ -81,7 +81,8 @@ public class BFS {
                     continue;
                 }
                 visited[newX][newY] = true;
-                queue.add(new Location(newX, newY));
+                Location newLocation = new Location(newX, newY);
+                queue.add(newLocation);
                 boolean isPortal = false;
                 for (char c: portals) {
                     if (cell == c) {
@@ -89,15 +90,16 @@ public class BFS {
                         for (int m = 0; m < Horz; m ++) {
                             for (int n = 0; n < Vert; n ++) {
                                 if ((grid.getTile(m, n) == c) && !visited[m][n]) {
-                                    queue.add(new Location(m, n));
-                                    parentMap.put(new Location(m, n), current);
+                                    newLocation =new Location(m, n);
+                                    queue.add(newLocation);
+                                    parentMap.put(newLocation, current);
                                 }
                             }
                         }
                     }
                 }
                 if (!isPortal) {
-                    parentMap.put(new Location(newX, newY), current);
+                    parentMap.put(newLocation, current);
                 }
             }
         }
@@ -105,11 +107,8 @@ public class BFS {
     }
 
     public static List<Location> constructPath(Map<Location, Location> parentMap, Location target) {
-        List<Location> path = new ArrayList<>();
+        ArrayList<Location> path = new ArrayList<>();
         Location current = target;
-//        for (Map.Entry<Location, Location> entry : parentMap.entrySet()) {
-//            System.out.println(entry.getKey() + ":" + entry.getValue());
-//        }
 
         while (current != null) {
             path.add(0, current);
@@ -117,7 +116,5 @@ public class BFS {
         }
         return path;
     }
-
-
 
 }
