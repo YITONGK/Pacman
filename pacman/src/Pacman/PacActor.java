@@ -3,7 +3,7 @@
 package src.Pacman;
 
 import ch.aplu.jgamegrid.*;
-import matachi.mapeditor.grid.Grid;
+import src.grid.Grid;
 import src.Game;
 import src.Items.ItemType;
 

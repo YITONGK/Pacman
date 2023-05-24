@@ -1,6 +1,6 @@
-package matachi.mapeditor.editor;
+package src.checker;
 
-import matachi.mapeditor.grid.Grid;
+import src.grid.Grid;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -3,8 +3,7 @@
 package src;
 
 import ch.aplu.jgamegrid.*;
-import matachi.mapeditor.editor.Controller;
-import matachi.mapeditor.grid.Grid;
+import src.grid.Grid;
 
 import java.awt.*;
 import java.io.File;
@@ -91,7 +90,7 @@ public class GameEngine extends GameGrid {
         // loop the monsters ArrayList to set seed and slowdown
         for(Monster monster: monsters){
             monster.setSeed(seed);
-            monster.setSlowDown(1000);
+            monster.setSlowDown(SPEED_DOWN);
         }
     }
 

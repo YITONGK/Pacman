@@ -1,43 +1,34 @@
-package matachi.mapeditor.editor;
+package src;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
-import javax.sound.sampled.Port;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import ch.aplu.jgamegrid.GGBackground;
-import ch.aplu.jgamegrid.GameGrid;
-import ch.aplu.jgamegrid.Location;
-import matachi.mapeditor.grid.Camera;
-import matachi.mapeditor.grid.Grid;
-import matachi.mapeditor.grid.GridCamera;
-import matachi.mapeditor.grid.GridModel;
-import matachi.mapeditor.grid.GridView;
+import src.editor.*;
+import src.checker.GameChecker;
+import src.checker.LevelCheckerComposite;
+import src.grid.Camera;
+import src.grid.Grid;
+import src.grid.GridCamera;
+import src.grid.GridModel;
+import src.grid.GridView;
 
-import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import src.GameEngine;
-import src.*;
 
 /**
  * Controller of the application.
@@ -324,7 +315,7 @@ public class Controller implements ActionListener, GUIInformation {
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
-				System.out.println("Filename: " + selectedFile.getName());
+//				System.out.println("Filename: " + selectedFile.getName());
 				Element rootNode = document.getRootElement();
 				List sizeList = rootNode.getChildren("size");
 				Element sizeElem = (Element) sizeList.get(0);
@@ -378,7 +369,7 @@ public class Controller implements ActionListener, GUIInformation {
 		view.setSize(width, height);
 	}
 
-	DocumentListener updateSizeFields = new DocumentListener() {
+	public DocumentListener updateSizeFields = new DocumentListener() {
 
 		public void changedUpdate(DocumentEvent e) {
 			gridWith = view.getWidth();

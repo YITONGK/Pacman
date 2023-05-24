@@ -1,4 +1,4 @@
-package matachi.mapeditor.editor;
+package src.editor;
 
 /**
  * Constants that the program uses.

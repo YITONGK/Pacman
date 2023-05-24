@@ -1,7 +1,7 @@
-package matachi.mapeditor.editor;
+package src.checker;
 
 import ch.aplu.jgamegrid.Location;
-import matachi.mapeditor.grid.Grid;
+import src.grid.Grid;
 
 import java.io.File;
 import java.util.ArrayList;
