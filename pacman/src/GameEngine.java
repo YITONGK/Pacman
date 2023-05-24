@@ -19,7 +19,7 @@ public class GameEngine extends GameGrid {
 
     private final static int nbHorzCells = 20;
     private final static int nbVertCells = 11;
-    private final static int cellSize = 33;
+    private final static int cellSize = 32;
     private final static int SIMULATION_PERIOD = 100;
     private final static int KEY_PERIOD = 150;
     private final static String TITLE = "[PacMan in the Torusverse]";

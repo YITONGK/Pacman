@@ -158,30 +158,21 @@ public class Controller implements ActionListener, GUIInformation {
 					Element row = new Element("row");
 					for (int x = 0; x < width; x++) {
 						char tileChar = model.getTile(x,y);
-						String type = "PathTile";
-
-						if (tileChar == 'b')
-							type = "WallTile";
-						else if (tileChar == 'c')
-							type = "PillTile";
-						else if (tileChar == 'd')
-							type = "GoldTile";
-						else if (tileChar == 'e')
-							type = "IceTile";
-						else if (tileChar == 'f')
-							type = "PacTile";
-						else if (tileChar == 'g')
-							type = "TrollTile";
-						else if (tileChar == 'h')
-							type = "TX5Tile";
-						else if (tileChar == 'i')
-							type = "PortalWhiteTile";
-						else if (tileChar == 'j')
-							type = "PortalYellowTile";
-						else if (tileChar == 'k')
-							type = "PortalDarkGoldTile";
-						else if (tileChar == 'l')
-							type = "PortalDarkGrayTile";
+						String type;
+						switch (tileChar) {
+							case 'b': type = "WallTile"; break;
+							case 'c': type = "PillTile"; break;
+							case 'd': type = "GoldTile"; break;
+							case 'e': type = "IceTile"; break;
+							case 'f': type = "PacTile"; break;
+							case 'g': type = "TrollTile"; break;
+							case 'h': type = "TX5Tile"; break;
+							case 'i': type = "PortalWhiteTile"; break;
+							case 'j': type = "PortalYellowTile"; break;
+							case 'k': type = "PortalDarkGoldTile"; break;
+							case 'l': type = "PortalDarkGrayTile"; break;
+							default : type = "PathTile"; break;
+						}
 
 						Element e = new Element("cell");
 						row.addContent(e.setText(type));
@@ -288,7 +279,6 @@ public class Controller implements ActionListener, GUIInformation {
 		return sortedFile;
 	}
 
-
 	/**
 	 * Return a grid from a selected file.
 	 */
@@ -318,34 +308,22 @@ public class Controller implements ActionListener, GUIInformation {
 					for (int x = 0; x < cells.size(); x++) {
 						Element cell = (Element) cells.get(x);
 						String cellValue = cell.getText();
-
-						char tileNr = 'a';
-						if (cellValue.equals("PathTile"))
-							tileNr = 'a';
-						else if (cellValue.equals("WallTile"))
-							tileNr = 'b';
-						else if (cellValue.equals("PillTile"))
-							tileNr = 'c';
-						else if (cellValue.equals("GoldTile"))
-							tileNr = 'd';
-						else if (cellValue.equals("IceTile"))
-							tileNr = 'e';
-						else if (cellValue.equals("PacTile"))
-							tileNr = 'f';
-						else if (cellValue.equals("TrollTile"))
-							tileNr = 'g';
-						else if (cellValue.equals("TX5Tile"))
-							tileNr = 'h';
-						else if (cellValue.equals("PortalWhiteTile"))
-							tileNr = 'i';
-						else if (cellValue.equals("PortalYellowTile"))
-							tileNr = 'j';
-						else if (cellValue.equals("PortalDarkGoldTile"))
-							tileNr = 'k';
-						else if (cellValue.equals("PortalDarkGrayTile"))
-							tileNr = 'l';
-						else
-							tileNr = '0';
+						char tileNr;
+						switch (cellValue) {
+							case "PathTile": tileNr = 'a'; break;
+							case "WallTile": tileNr = 'b'; break;
+							case "PillTile": tileNr = 'c'; break;
+							case "GoldTile": tileNr = 'd'; break;
+							case "IceTile": tileNr = 'e'; break;
+							case "PacTile": tileNr = 'f'; break;
+							case "TrollTile": tileNr = 'g'; break;
+							case "TX5Tile": tileNr = 'h'; break;
+							case "PortalWhiteTile": tileNr = 'i'; break;
+							case "PortalYellowTile": tileNr = 'j'; break;
+							case "PortalDarkGoldTile": tileNr = 'k'; break;
+							case "PortalDarkGrayTile": tileNr = 'l'; break;
+							default: tileNr = '0'; break;
+						}
 
 						model.setTile(x, y, tileNr);
 						modelCopy.setTile(x, y, tileNr);
