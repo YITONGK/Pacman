@@ -62,20 +62,14 @@ public class GameEngine extends GameGrid {
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
         this.controller = controller;
         this.mapDir = mapArg;
-        if (mapArg == null) {
-            grid = controller.getModel();
-        } else {
-            grid = controller.loadFile(mapArg);
-        }
+        grid = controller.getGrid();
         if (grid != null) {
             seed = Integer.parseInt(properties.getProperty("seed"));
             isAuto = Boolean.parseBoolean(properties.getProperty("PacMan.isAuto"));
             setSimulationPeriod(SIMULATION_PERIOD);
             setTitle(TITLE);
-            // Set up game actors
             game = new Game(nbHorzCells, nbVertCells);
             setUpAll();
-            // Run game
             GGBackground bg = getBg();
             this.background = bg;
             drawGrid();
@@ -97,11 +91,10 @@ public class GameEngine extends GameGrid {
         // loop the monsters ArrayList to set seed and slowdown
         for(Monster monster: monsters){
             monster.setSeed(seed);
-            monster.setSlowDown(SPEED_DOWN);
+            monster.setSlowDown(1000);
         }
     }
 
-    // TODO: using map to set up actor locations instead of property file
     private void setupActorLocations() {
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
@@ -120,7 +113,6 @@ public class GameEngine extends GameGrid {
     }
 
 
-    // TODO: use map to set up pill and items locations instead of property file
     private void setupPillAndItemsLocations() {
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
@@ -143,7 +135,6 @@ public class GameEngine extends GameGrid {
         }
     }
 
-    // Check the status of the game and render relevant texts
     private void runGame() {
 
         GGBackground bg = this.background;
@@ -166,8 +157,8 @@ public class GameEngine extends GameGrid {
             title = "GAME OVER";
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
-
-            grid = controller.loadNextFile();
+            controller.nextLevel();
+            grid = controller.getGrid();
             if (grid != null) {
                 removeAllActors();
                 this.game = new Game(nbHorzCells, nbVertCells);
@@ -213,31 +204,6 @@ public class GameEngine extends GameGrid {
         for (Item item: iceCubes) {
             bg.setPaintColor(Color.blue);
             bg.fillCircle(toPoint(item.getLocation()), 5);
-        }
-    }
-
-    public static String findFile(String currFile, String mapDir) {
-        File folder = new File(mapDir);
-        File[] files = folder.listFiles();
-        ArrayList<String> fileNames = new ArrayList<>();
-
-        for (File file : files) {
-            if (file.isFile() && file.getName().matches("\\d.*")) {
-                fileNames.add(file.getName());
-            }
-        }
-
-        fileNames.sort((fileName1, fileName2) -> {
-            int num1 = Integer.parseInt(fileName1.replaceAll("\\D+", ""));
-            int num2 = Integer.parseInt(fileName2.replaceAll("\\D+", ""));
-            return Integer.compare(num1, num2);
-        });
-
-        int i = fileNames.indexOf(currFile);
-        if (i >= 0 && i < fileNames.size() - 1) {
-            return fileNames.get(i + 1);
-        } else {
-            return null;
         }
     }
 

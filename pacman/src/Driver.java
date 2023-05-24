@@ -1,6 +1,14 @@
 package src;
 
 import matachi.mapeditor.editor.Controller;
+import src.utility.GameCallback;
+import src.utility.PropertiesLoader;
+import src.utility.GameCallback;
+import src.utility.PropertiesLoader;
+
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Properties;
 
 public class Driver {
     public static final String GMAP_PATH = "pacman/TestFolder";
@@ -14,9 +22,10 @@ public class Driver {
 
     public static void main(String args[]) {
         // TODO: added game path to load maps, added controller
-        Controller controller = new Controller();
+
         String gmapPath = GMAP_PATH;
         String propertiesPath = DEFAULT_PROPERTIES_PATH;
+        Controller controller = new Controller();
         if (args.length > 0) {
             gmapPath = args[0];
         }

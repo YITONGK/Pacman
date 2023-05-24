@@ -53,6 +53,7 @@ public class Controller implements ActionListener, GUIInformation {
 	 * The model of the map editor.
 	 */
 	private Grid model;
+	private Grid gameGrid = null;
 
 	private Tile selectedTile;
 	private Camera camera;
@@ -64,6 +65,7 @@ public class Controller implements ActionListener, GUIInformation {
 
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
+	private boolean isTest = false;
 
 	private ArrayList<File> sortedFile = new ArrayList<>();
 	public File currFile = null;
@@ -72,13 +74,15 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * Construct the controller.
 	 */
-	public Controller() {
+	public Controller(String arg) {
 		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
-//		try {
-//            fileWriter = new FileWriter(new File("log.txt"));
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
+		if (arg != null) {
+			File entry = new File(arg);
+			if (entry.isDirectory()) {
+				isTest = true;
+			}
+			processEntry(entry);
+		}
 	}
 
 	public void init(int width, int height) {
@@ -94,42 +98,73 @@ public class Controller implements ActionListener, GUIInformation {
 		return this.model;
 	}
 
+	public Grid getGrid() {
+		return this.gameGrid;
+	}
+
 	/**
 	 * Different commands that comes from the view.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		for (Tile t : tiles) {
-			if (e.getActionCommand().equals(
-					Character.toString(t.getCharacter()))) {
+			if (e.getActionCommand().equals(Character.toString(t.getCharacter()))) {
 				selectedTile = t;
 				break;
 			}
 		}
-		if (e.getActionCommand().equals("flipGrid")) {
-			// view.flipGrid();
-		} else if (e.getActionCommand().equals("save")) {
-			saveFile();
-		} else if (e.getActionCommand().equals("load")) {
-			loadFile(null);
-		} else if (e.getActionCommand().equals("update")) {
-			updateGrid(gridWith, gridHeight);
-		} else if (e.getActionCommand().equals("start_game")) {
-			startUp(null);
+		switch (e.getActionCommand()) {
+			case "flipGrid":
+				break;
+			case "save":
+				saveFile();
+				break;
+			case "load":
+				File selectedFile = selectFile();
+				if (selectedFile != null) {
+					processEntry(selectedFile);
+				}
+				break;
+			case "update":
+				updateGrid(gridWith, gridHeight);
+				break;
+		}
+	}
+
+	private void processEntry(File entry) {
+		if (entry.isFile()) {
+			loadFileAndLogErrors(entry);
+		} else if (entry.isDirectory()) {
+			sortedFile = processFolder(entry.getPath());
+			if (sortedFile != null && !sortedFile.isEmpty()) {
+				loadFileAndLogErrors(sortedFile.get(0));
+			}
+		}
+	}
+
+	private void loadFileAndLogErrors(File file) {
+		loadFile(file.getPath());
+		String log = LevelCheckerComposite.getInstance().checkLevel(file, model);
+		if (!log.isEmpty()) {
+			writeErrorLog(file.getName() + "_ErrorMapLog.txt", log);
+			gameGrid = null;
+		} else if (isTest){
+			gameGrid = model;
+		}
+	}
+
+	private void writeErrorLog(String fileName, String log) {
+		try {
+			fileWriter = new FileWriter(new File(fileName));
+			writeString(log);
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
 		}
 	}
 
 	/**
-	 * Test mode action.
+	 * Save the current map.
 	 */
-	public void startUp(String path) {
-		if (path == null) {
-			loadFile(null);
-		} else {
-			loadFile(path);
-		}
-	}
-
 	private void saveFile() {
 
 		JFileChooser chooser = new JFileChooser();
@@ -191,52 +226,43 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-	public Grid loadFile(String pathStr) {
-		File mPath;
+	/**
+	 * User GUI for selecting a file. Returns the file or directory selected.
+	 */
+	public File selectFile() {
+		File path = null;
 		SAXBuilder builder = new SAXBuilder();
 		try {
-			if (!(pathStr == null)) {
-				mPath = new File(pathStr);
-			} else {
-				JFileChooser chooser = new JFileChooser();
-				chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-				File workingDirectory = new File(System.getProperty("user.dir"));
-				chooser.setCurrentDirectory(workingDirectory);
+			JFileChooser chooser = new JFileChooser();
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			File workingDirectory = new File(System.getProperty("user.dir"));
+			chooser.setCurrentDirectory(workingDirectory);
 
-				int returnVal = chooser.showOpenDialog(null);
-				if (returnVal != JFileChooser.APPROVE_OPTION) {
-					return null;
-				}
-				mPath = chooser.getSelectedFile();
+			int returnVal = chooser.showOpenDialog(null);
+			if (returnVal != JFileChooser.APPROVE_OPTION) {
+				return null;
 			}
-			if (mPath.isFile()){
-				currFile = mPath;
-				String logName = currFile.getName();
-				model = processFile(currFile, builder);
-				String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
-				if (log.length() != 0) {
-					currFile = null;
-					fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
-					writeString(log);
-					return null;
-				}
-			} else if (mPath.isDirectory()){
-				if (processFolder(mPath, builder) != null) {
-					currFile = sortedFile.get(0);
-					String logName = currFile.getName();
-					model = processFile(currFile, builder);
-					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
-					if (log.length() != 0) {
-						currFile = null;
-						fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
-						writeString(log);
-						return null;
-					}
-				} else {
-					model = getModel();
-					return null;
-				}
+			path = chooser.getSelectedFile();
+			if (path.isFile()){
+				loadFile(path.getPath());
+			} else if (path.isDirectory()){
+				processFolder(path.getPath());
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return path;
+	}
+
+	/**
+	 * Load a file and returns the grid.
+	 */
+	public Grid loadFile(String pathStr) {
+		File mPath;
+		try {
+			mPath = new File(pathStr);
+			currFile = mPath;
+			model = processFile(currFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -246,21 +272,30 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * Return a grid of the next file in the sorted file list.
 	 */
-	public Grid loadNextFile() {
+	public File loadNextFile() {
 		int i = sortedFile.indexOf(currFile);
 		if ((i + 1) < sortedFile.size()) {
-			return loadFile(sortedFile.get(i + 1).getPath());
+			return sortedFile.get(i + 1);
 		} else {
 			return null;
 		}
-
 	}
+
+	public void nextLevel() {
+		File nextFile = loadNextFile();
+		if (nextFile != null) {
+			processEntry(nextFile);
+		} else {
+			gameGrid = null;
+		}
+	}
+
 
 	/**
 	 * Return a sorted arraylist of files that meets the requirement.
 	 */
-	private ArrayList<File> processFolder(File folder, SAXBuilder builder){
-
+	private ArrayList<File> processFolder(String folderPath){
+		File folder = new File(folderPath);
 		ArrayList<File> mapFiles = GameChecker.getInstance().checkGame(folder);
 
 		if (mapFiles == null){
@@ -282,11 +317,10 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * Return a grid from a selected file.
 	 */
-	private Grid processFile(File selectedFile, SAXBuilder builder){
-		this.currFile = selectedFile;
+	private Grid processFile(File selectedFile){
+		SAXBuilder builder = new SAXBuilder();
 		Document document;
 		Grid modelCopy = new GridModel(gridWith, gridHeight, tiles.get(0).getCharacter());
-
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
@@ -324,7 +358,6 @@ public class Controller implements ActionListener, GUIInformation {
 							case "PortalDarkGrayTile": tileNr = 'l'; break;
 							default: tileNr = '0'; break;
 						}
-
 						model.setTile(x, y, tileNr);
 						modelCopy.setTile(x, y, tileNr);
 					}
@@ -379,6 +412,5 @@ public class Controller implements ActionListener, GUIInformation {
 			e.printStackTrace();
 		}
 	}
-
 }
 
