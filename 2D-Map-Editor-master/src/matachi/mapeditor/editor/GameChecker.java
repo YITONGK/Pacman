@@ -1,19 +1,16 @@
 package matachi.mapeditor.editor;
 
-import matachi.mapeditor.grid.GridModel;
-import src.Game;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 public class GameChecker {
     private static GameChecker instance;
     FileWriter fileWriter = null;
     private GameChecker() {
-
     }
 
     public static GameChecker getInstance(){
@@ -29,11 +26,10 @@ public class GameChecker {
      * 2. the sequence of map files well-defined, where only one map file named with a particular number.
      */
     public ArrayList<File> checkGame(File folder){
-        ArrayList<File> mapFiles = new ArrayList<File>();
+        ArrayList<File> mapFiles = new ArrayList<>();
         File[] files = folder.listFiles();
         HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
-        char firstChar;
-        int nameNum, countValidFiles = 0;
+        int mapNum, countValidFiles = 0;
         boolean startsWithUniqueNumbers = true;
 
         // Folder must contain contents to be valid
@@ -41,41 +37,44 @@ public class GameChecker {
             for (int i = 0; i < files.length; i++){
                 // We only use folder contents which are files
                 if (files[i].isFile()){
-                    firstChar = files[i].getName().charAt(0);
-                    if (Character.isDigit(firstChar)){
-                        nameNum = Character.getNumericValue(firstChar);
+                    String startNum = getStartNum(files[i].getName());
+                    if (!startNum.isEmpty()) {
+                        mapNum = Integer.parseInt(startNum);
                         // If a particular number has not been used for a map file name
-                        if (!nameHashMap.containsKey(nameNum)) {
+                        if (!nameHashMap.containsKey(mapNum)) {
                             ArrayList<String> names = new ArrayList<>();
                             names.add(files[i].getName());
-                            nameHashMap.put(nameNum, names);
+                            nameHashMap.put(mapNum, names);
                             // Add any valid map files to our arraylist
                             mapFiles.add(files[i]);
                         }
                         else {
-                            nameHashMap.get(nameNum).add(files[i].getName());
+                            nameHashMap.get(mapNum).add(files[i].getName());
                         }
                         countValidFiles++;
                     }
                 }
             }
         }
-        try {
-            fileWriter = new FileWriter(new File("log.txt"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+
         if (countValidFiles == 0){
-            // TODO: print error to log (e.g., [Game foldername – no maps found])
-            System.out.println("Game foldername – no maps found");
-            writeString("Game foldername – no maps found");
+            try {
+                fileWriter = new FileWriter(new File("GameCheckErrorLog.txt"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            writeString("Game " + folder.getName() + " – no maps found");
         }
         for (Integer key: nameHashMap.keySet()){
             if (nameHashMap.get(key).size() > 1){
                 startsWithUniqueNumbers = false;
-                // TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
-                System.out.println("Game foldername – multiple maps at same level: ");
-                writeString("Game foldername – multiple maps at same level: ");
+                try {
+                    fileWriter = new FileWriter(new File("GameCheckErrorLog.txt"));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                String conflictFiles = nameHashMap.get(key).stream().collect(Collectors.joining(".xml; "));
+                writeString("Game " + folder.getName() + " – multiple maps at same level: " + conflictFiles + ".xml");
             }
         }
         boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
@@ -83,6 +82,19 @@ public class GameChecker {
             return null;
         }
         return mapFiles;
+    }
+
+    public String getStartNum(String filename) {
+        String startNum = "";
+        char c;
+        for (int i = 0; i < filename.length(); i ++) {
+            c = filename.charAt(i);
+            if (!Character.isDigit(c)) {
+                return startNum;
+            }
+            startNum = startNum + c;
+        }
+        return startNum;
     }
 
     public void writeString(String str) {
