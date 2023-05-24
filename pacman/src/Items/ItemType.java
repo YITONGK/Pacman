@@ -17,9 +17,6 @@ public enum ItemType {
         };
     }
 
-    // TODO: Added image paths to each portal type
-    //  (this may be modified if we change the location of the editor module)
-
     public String getImage(){
         return switch (this) {
             case GOLD_PIECE -> "pacman/sprites/data/d_goldTile.png";

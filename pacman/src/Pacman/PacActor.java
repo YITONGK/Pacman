@@ -6,7 +6,6 @@ import ch.aplu.jgamegrid.*;
 import src.grid.Grid;
 import src.Game;
 import src.Items.ItemType;
-
 import java.awt.event.KeyEvent;
 import java.awt.Color;
 
@@ -82,67 +81,6 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
       game.resetPortal();
     }
   }
-//
-//  private void moveInAutoMode() {
-//    Location closestPill = closestPillLocation();
-//    double oldDirection = getDirection();
-//    Location.CompassDirection compassDir =
-//            getLocation().get4CompassDirectionTo(closestPill);
-//    Location next = getLocation().getNeighbourLocation(compassDir);
-//    setDirection(compassDir);
-//    if (!isVisited(next) && canMove(next)) {
-//      setLocation(next);
-//    } else {
-//      // normal movement
-//      int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
-//      setDirection(oldDirection);
-//      turn(sign * 90);  // Try to turn left/right
-//      next = getNextMoveLocation();
-//      if (canMove(next)) {
-//        setLocation(next);
-//      } else {
-//        setDirection(oldDirection);
-//        next = getNextMoveLocation();
-//        if (canMove(next)) // Try to move forward
-//        {
-//          setLocation(next);
-//        } else {
-//          setDirection(oldDirection);
-//          turn(-sign * 90);  // Try to turn right/left
-//          next = getNextMoveLocation();
-//          if (canMove(next)) {
-//            setLocation(next);
-//          } else {
-//            setDirection(oldDirection);
-//            turn(180);  // Turn backward
-//            next = getNextMoveLocation();
-//            setLocation(next);
-//          }
-//        }
-//      }
-//    }
-//    eatPill(next);
-//    addVisitedList(next);
-//  }
-//
-//  // this method is used to choose the location which is closest to a remaining item
-//  // will be used in auto move mode, to help pacman automatically choose next step
-//  private Location closestPillLocation() {
-//    int currentDistance = 1000;
-//    Location currentLocation = null;
-//    int distanceToItem;
-//    List<Item> items = new ArrayList<>();
-//    items.addAll(game.getPills());
-//    items.addAll(game.getGoldPieces());
-//    for (Item item: items) {
-//      distanceToItem = item.getLocation().getDistanceTo(getLocation());
-//      if (distanceToItem < currentDistance) {
-//        currentLocation = item.getLocation();
-//        currentDistance = distanceToItem;
-//      }
-//    }
-//    return currentLocation;
-//  }
 
   // check whether the current location pacman stands in has an item, if so, different items have different effects
   private void eatPill(Location location) {
@@ -171,7 +109,6 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     String title = "[PacMan in the Torusverse] Current score: " + score;
     gameGrid.setTitle(title);
   }
-
 
   public void setAuto(boolean auto) {
     isAuto = auto;

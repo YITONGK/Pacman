@@ -1,16 +1,11 @@
 package src.Items;
 
-// TODO: Added PortalPair class for adding portals to map,
-//  and also additional functions for level checking purposes
-
 import ch.aplu.jgamegrid.*;
-
 import java.util.ArrayList;
 
 public class PortalPair {
     // Each portal is an Item
     private ArrayList<Item> portals;
-
     private int countPortals;
     // Flag to check the nature of PacMan-Portal overlap
     // (i.e., did PacMan move onto Portal, or was PacMan transported onto Portal?)
@@ -32,20 +27,12 @@ public class PortalPair {
     }
 
     /**
-     * Function used in Level Checking to detect validity of current portal pair
+     * Function used in Level Check to detect validity of current portal pair, either 0 or 2 for each "type" of portal
      * @return
      */
     public boolean checkPortalTypeIsValid(){
-        return checkPortalCount();
-    }
-
-    /**
-     * Function to check that we have either 0 or 2 portals, for each "type" of portal
-     */
-    private boolean checkPortalCount(){
         return (countPortals == VALID_PAIR) || (countPortals == EMPTY_PAIR);
     }
-
 
     /**
      * Function to transport PacMan to the other portal
@@ -83,5 +70,4 @@ public class PortalPair {
             movedOntoPortal = true;
         }
     }
-
 }

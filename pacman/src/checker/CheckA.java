@@ -2,12 +2,10 @@ package src.checker;
 
 import ch.aplu.jgamegrid.Location;
 import src.grid.Grid;
-
 import java.io.File;
 import java.util.ArrayList;
 
 public class CheckA extends LevelCheckComponent{
-
     @Override
     public String checkLevel(File file, Grid grid) {
         int countPacMan = 0;
@@ -37,5 +35,4 @@ public class CheckA extends LevelCheckComponent{
         }
         return log;
     }
-
 }

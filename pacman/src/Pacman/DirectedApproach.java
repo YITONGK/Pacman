@@ -4,7 +4,6 @@ import ch.aplu.jgamegrid.Location;
 import src.grid.Grid;
 import src.Game;
 import src.Items.Item;
-
 import java.util.*;
 
 public class DirectedApproach implements MoveStrategy {
@@ -21,7 +20,6 @@ public class DirectedApproach implements MoveStrategy {
         items.addAll(game.getPills());
         items.addAll(game.getGoldPieces());
     }
-
 
     // this method is used to choose the location which is closest to a remaining item
     // will be used in auto move mode, to help pacman automatically choose next step
@@ -46,7 +44,6 @@ public class DirectedApproach implements MoveStrategy {
         if (target == null || path.size() == 0) {
             target = closestPillLocation(pacman);
             path = bfs(pacman.getLocation(), target, grid);
-
         }
         Location next = path.remove(1);
         if (next.equals(target)) {
@@ -66,7 +63,6 @@ public class DirectedApproach implements MoveStrategy {
         queue.add(start);
         Map<Location, Location> parentMap = new HashMap<>();
         parentMap.put(start, null);
-
         while (!queue.isEmpty()) {
             Location current = queue.poll();
             if (current.equals(target)) {
@@ -113,12 +109,10 @@ public class DirectedApproach implements MoveStrategy {
     public static List<Location> constructPath(Map<Location, Location> parentMap, Location target) {
         ArrayList<Location> path = new ArrayList<>();
         Location current = target;
-
         while (current != null) {
             path.add(0, current);
             current = parentMap.get(current);
         }
         return path;
     }
-
 }

@@ -39,7 +39,6 @@ public class Game {
     this.hasPacmanEatAllPills = false;
   }
 
-
   public void removeItem(ItemType type, Location location){
     if(type == ItemType.GOLD_PIECE){
       for (Item item : goldPieces){
@@ -65,7 +64,6 @@ public class Game {
     this.monsters = monsters;
   }
 
-  // TODO: Added portals to game
   public void addItems(ArrayList<Item> pills, ArrayList<Item> goldPieces, ArrayList<Item> iceCubes,
     PortalPair whitePortals, PortalPair yellowPortals, PortalPair darkGrayPortals, PortalPair darkGoldPortals) {
     this.pills = new ArrayList<>();
@@ -80,7 +78,6 @@ public class Game {
     this.darkGrayPortals = darkGrayPortals;
   }
 
-  // TODO: Added portal-overlap-with-pacman logic
   public Location moveActorThroughPortal(Actor actor){
     Location moveTo;
     if ((moveTo = whitePortals.moveActor(actor)) != null){
@@ -133,13 +130,14 @@ public class Game {
   public ArrayList<Item> getPills() {
     return this.pills;
   }
+
   public ArrayList<Item> getGoldPieces() {
     return this.goldPieces;
   }
+
   public ArrayList<Item> getIceCubes() {
     return this.iceCubes;
   }
-
 
   public int getNumHorzCells() {
     return this.nbHorzCells;
@@ -160,5 +158,4 @@ public class Game {
   public boolean isWin() {
     return this.hasPacmanEatAllPills;
   }
-
 }

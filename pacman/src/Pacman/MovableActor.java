@@ -4,7 +4,6 @@ import ch.aplu.jgamegrid.Actor;
 import ch.aplu.jgamegrid.Location;
 import src.Game;
 import src.Monsters.MonsterType;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;

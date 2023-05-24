@@ -8,13 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import src.editor.*;
 import src.checker.GameChecker;
 import src.checker.LevelCheckerComposite;
@@ -23,7 +21,6 @@ import src.grid.Grid;
 import src.grid.GridCamera;
 import src.grid.GridModel;
 import src.grid.GridView;
-
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -39,25 +36,19 @@ import org.jdom.output.XMLOutputter;
  * 
  */
 public class Controller implements ActionListener, GUIInformation {
-
 	/**
 	 * The model of the map editor.
 	 */
 	private Grid model;
 	private Grid gameGrid = null;
-
 	private Tile selectedTile;
 	private Camera camera;
-
 	private List<Tile> tiles;
-
 	private GridView grid;
 	private View view;
-
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
 	private boolean isTest = false;
-
 	private ArrayList<File> sortedFile = new ArrayList<>();
 	public File currFile = null;
 	FileWriter fileWriter = null;
@@ -83,10 +74,6 @@ public class Controller implements ActionListener, GUIInformation {
 				Constants.GRID_HEIGHT);
 		grid = new GridView(this, camera, tiles);
 		this.view = new View(this, camera, grid, tiles);
-	}
-
-	public Grid getModel() {
-		return this.model;
 	}
 
 	public Grid getGrid() {
@@ -157,49 +144,42 @@ public class Controller implements ActionListener, GUIInformation {
 	 * Save the current map.
 	 */
 	private void saveFile() {
-
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
 				"xml files", "xml");
 		chooser.setFileFilter(filter);
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		chooser.setCurrentDirectory(workingDirectory);
-
 		int returnVal = chooser.showSaveDialog(null);
 		try {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-
 				Element level = new Element("level");
 				Document doc = new Document(level);
 				doc.setRootElement(level);
-
 				Element size = new Element("size");
 				int height = model.getHeight();
 				int width = model.getWidth();
 				size.addContent(new Element("width").setText(width + ""));
 				size.addContent(new Element("height").setText(height + ""));
 				doc.getRootElement().addContent(size);
-
 				for (int y = 0; y < height; y++) {
 					Element row = new Element("row");
 					for (int x = 0; x < width; x++) {
 						char tileChar = model.getTile(x,y);
-						String type;
+						String type = "PathTile";
 						switch (tileChar) {
-							case 'b': type = "WallTile"; break;
-							case 'c': type = "PillTile"; break;
-							case 'd': type = "GoldTile"; break;
-							case 'e': type = "IceTile"; break;
-							case 'f': type = "PacTile"; break;
-							case 'g': type = "TrollTile"; break;
-							case 'h': type = "TX5Tile"; break;
-							case 'i': type = "PortalWhiteTile"; break;
-							case 'j': type = "PortalYellowTile"; break;
-							case 'k': type = "PortalDarkGoldTile"; break;
-							case 'l': type = "PortalDarkGrayTile"; break;
-							default : type = "PathTile"; break;
+							case 'b' -> type = "WallTile";
+							case 'c' -> type = "PillTile";
+							case 'd' -> type = "GoldTile";
+							case 'e' -> type = "IceTile";
+							case 'f' -> type = "PacTile";
+							case 'g' -> type = "TrollTile";
+							case 'h' -> type = "TX5Tile";
+							case 'i' -> type = "PortalWhiteTile";
+							case 'j' -> type = "PortalYellowTile";
+							case 'k' -> type = "PortalDarkGoldTile";
+							case 'l' -> type = "PortalDarkGrayTile";
 						}
-
 						Element e = new Element("cell");
 						row.addContent(e.setText(type));
 					}
@@ -214,6 +194,7 @@ public class Controller implements ActionListener, GUIInformation {
 			JOptionPane.showMessageDialog(null, "Invalid file!", "error",
 					JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -222,7 +203,6 @@ public class Controller implements ActionListener, GUIInformation {
 	 */
 	public File selectFile() {
 		File path = null;
-		SAXBuilder builder = new SAXBuilder();
 		try {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
@@ -288,20 +268,15 @@ public class Controller implements ActionListener, GUIInformation {
 	private ArrayList<File> processFolder(String folderPath){
 		File folder = new File(folderPath);
 		ArrayList<File> mapFiles = GameChecker.getInstance().checkGame(folder);
-
 		if (mapFiles == null){
 			return null;
 		}
-
 		mapFiles.sort((file1, file2) -> {
 			int num1 = Integer.parseInt(file1.getName().replaceAll("\\D+", ""));
 			int num2 = Integer.parseInt(file2.getName().replaceAll("\\D+", ""));
 			return Integer.compare(num1, num2);
 		});
-
-		for (File mfile : mapFiles) {
-			sortedFile.add(mfile);
-		}
+		sortedFile.addAll(mapFiles);
 		return sortedFile;
 	}
 
@@ -315,7 +290,6 @@ public class Controller implements ActionListener, GUIInformation {
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
-//				System.out.println("Filename: " + selectedFile.getName());
 				Element rootNode = document.getRootElement();
 				List sizeList = rootNode.getChildren("size");
 				Element sizeElem = (Element) sizeList.get(0);
@@ -329,25 +303,23 @@ public class Controller implements ActionListener, GUIInformation {
 				for (int y = 0; y < rows.size(); y++) {
 					Element cellsElem = (Element) rows.get(y);
 					List cells = cellsElem.getChildren("cell");
-
 					for (int x = 0; x < cells.size(); x++) {
 						Element cell = (Element) cells.get(x);
 						String cellValue = cell.getText();
-						char tileNr;
+						char tileNr = '0';
 						switch (cellValue) {
-							case "PathTile": tileNr = 'a'; break;
-							case "WallTile": tileNr = 'b'; break;
-							case "PillTile": tileNr = 'c'; break;
-							case "GoldTile": tileNr = 'd'; break;
-							case "IceTile": tileNr = 'e'; break;
-							case "PacTile": tileNr = 'f'; break;
-							case "TrollTile": tileNr = 'g'; break;
-							case "TX5Tile": tileNr = 'h'; break;
-							case "PortalWhiteTile": tileNr = 'i'; break;
-							case "PortalYellowTile": tileNr = 'j'; break;
-							case "PortalDarkGoldTile": tileNr = 'k'; break;
-							case "PortalDarkGrayTile": tileNr = 'l'; break;
-							default: tileNr = '0'; break;
+							case "PathTile" -> tileNr = 'a';
+							case "WallTile" -> tileNr = 'b';
+							case "PillTile" -> tileNr = 'c';
+							case "GoldTile" -> tileNr = 'd';
+							case "IceTile" -> tileNr = 'e';
+							case "PacTile" -> tileNr = 'f';
+							case "TrollTile" -> tileNr = 'g';
+							case "TX5Tile" -> tileNr = 'h';
+							case "PortalWhiteTile" -> tileNr = 'i';
+							case "PortalYellowTile" -> tileNr = 'j';
+							case "PortalDarkGoldTile" -> tileNr = 'k';
+							case "PortalDarkGrayTile" -> tileNr = 'l';
 						}
 						model.setTile(x, y, tileNr);
 						modelCopy.setTile(x, y, tileNr);
@@ -370,17 +342,14 @@ public class Controller implements ActionListener, GUIInformation {
 	}
 
 	public DocumentListener updateSizeFields = new DocumentListener() {
-
 		public void changedUpdate(DocumentEvent e) {
 			gridWith = view.getWidth();
 			gridHeight = view.getHeight();
 		}
-
 		public void removeUpdate(DocumentEvent e) {
 			gridWith = view.getWidth();
 			gridHeight = view.getHeight();
 		}
-
 		public void insertUpdate(DocumentEvent e) {
 			gridWith = view.getWidth();
 			gridHeight = view.getHeight();

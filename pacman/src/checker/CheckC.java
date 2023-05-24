@@ -2,7 +2,6 @@ package src.checker;
 
 import ch.aplu.jgamegrid.Location;
 import src.grid.Grid;
-
 import java.io.File;
 import java.util.ArrayList;
 

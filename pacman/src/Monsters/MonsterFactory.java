@@ -6,7 +6,6 @@ public class MonsterFactory {
     private static MonsterFactory instance;
 
     private MonsterFactory(){
-
     }
 
     public static MonsterFactory getInstance(){

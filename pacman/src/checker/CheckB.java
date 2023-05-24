@@ -5,12 +5,10 @@ import src.grid.Grid;
 import src.Items.Item;
 import src.Items.ItemType;
 import src.Items.PortalPair;
-
 import java.io.File;
 import java.util.ArrayList;
 
 public class CheckB extends LevelCheckComponent{
-
     public String checkLevel(File file, Grid grid) {
         char tileChar;
         Location location;
@@ -64,5 +62,4 @@ public class CheckB extends LevelCheckComponent{
         }
         return log;
     }
-
 }

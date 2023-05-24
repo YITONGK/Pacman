@@ -1,7 +1,6 @@
 package src.checker;
 
 import src.grid.Grid;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

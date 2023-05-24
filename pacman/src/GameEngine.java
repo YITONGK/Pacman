@@ -4,13 +4,10 @@ package src;
 
 import ch.aplu.jgamegrid.*;
 import src.grid.Grid;
-
 import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
-
 import src.Items.Item;
 import src.Items.ItemFactory;
 import src.Items.PortalPair;
@@ -23,7 +20,6 @@ import src.utility.PropertiesLoader;
  * GameEngine reads the property file, initialises the game, and runs the game.
  */
 public class GameEngine extends GameGrid {
-
     private final static int nbHorzCells = 20;
     private final static int nbVertCells = 11;
     private final static int cellSize = 32;
@@ -31,14 +27,11 @@ public class GameEngine extends GameGrid {
     private final static int KEY_PERIOD = 150;
     private final static String TITLE = "[PacMan in the Torusverse]";
     private final static boolean isNavigation = false;
-    private String mapDir;
-    private String currFile;
     private int seed = 30006;
     private boolean isAuto;
     private Game game;
     private Controller controller;
     private GGBackground background;
-    private ArrayList<File> sortedFile;
     protected PacActor pacActor;
     private Grid grid;
     private final String[] monsterCharacters = {"g", "h"};
@@ -47,20 +40,18 @@ public class GameEngine extends GameGrid {
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
     private ArrayList<Item> iceCubes;
-    // TODO: Added portal instances (can also instantiate in own class - I may change this code in the future)
     private PortalPair whitePortals;
     private PortalPair yellowPortals;
     private PortalPair darkGoldPortals;
     private PortalPair darkGrayPortals;
     private Properties properties;
-    private final int SPEED_DOWN = 5;
+    private final int SPEED_DOWN = 3;
 
-    public GameEngine(String propertiesPath, String mapArg, Controller controller) {
+    public GameEngine(String propertiesPath, Controller controller) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
         this.controller = controller;
-        this.mapDir = mapArg;
         grid = controller.getGrid();
         if (grid != null) {
             seed = Integer.parseInt(properties.getProperty("seed"));
@@ -111,7 +102,6 @@ public class GameEngine extends GameGrid {
         }
     }
 
-
     private void setupPillAndItemsLocations() {
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
@@ -121,13 +111,13 @@ public class GameEngine extends GameGrid {
                     Item item = ItemFactory.getInstance().createItem(type, location);
                     addActor(item, location);
                     switch (type) {
-                        case 'c': pills.add(item); break;
-                        case 'd': goldPieces.add(item); break;
-                        case 'e': iceCubes.add(item); break;
-                        case 'i': whitePortals.addPortal(item); break;
-                        case 'j': yellowPortals.addPortal(item); break;
-                        case 'k': darkGoldPortals.addPortal(item); break;
-                        case 'l': darkGrayPortals.addPortal(item); break;
+                        case 'c' -> pills.add(item);
+                        case 'd' -> goldPieces.add(item);
+                        case 'e' -> iceCubes.add(item);
+                        case 'i' -> whitePortals.addPortal(item);
+                        case 'j' -> yellowPortals.addPortal(item);
+                        case 'k' -> darkGoldPortals.addPortal(item);
+                        case 'l' -> darkGrayPortals.addPortal(item);
                     }
                 }
             }
@@ -135,7 +125,6 @@ public class GameEngine extends GameGrid {
     }
 
     private void runGame() {
-
         GGBackground bg = this.background;
         doRun();
         show();

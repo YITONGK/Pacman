@@ -5,14 +5,11 @@ package src.Monsters;
 import ch.aplu.jgamegrid.*;
 import src.Game;
 import src.Pacman.MovableActor;
-
 import java.util.*;
 
 public abstract class Monster extends MovableActor {
   protected MonsterType type;
   protected boolean stopMoving = false;
-  protected boolean isFurious = false;
-  protected boolean isFrozen = false;
 
   public Monster(Game game, MonsterType type) {
     super(game, type);
@@ -21,7 +18,7 @@ public abstract class Monster extends MovableActor {
 
   public void act() {
     // either stopMoving or isFrozen is true, monsters stand still, this act() method will not reach the walk() method
-    if (stopMoving || isFrozen) {
+    if (stopMoving) {
       return;
     }
     walk();
@@ -53,11 +50,10 @@ public abstract class Monster extends MovableActor {
   // hits maze wall
   public Location randomWalk() {
     double oldDirection = getDirection();
-    Location next = null;
     int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;
     setDirection(oldDirection);
     turn(sign * 90);  // Try to turn left/right
-    next = getNextMoveLocation();
+    Location next = getNextMoveLocation();
     if (canMove(next)) {
       return next;
     } else {
