@@ -18,11 +18,9 @@ public class MonsterFactory {
 
     public Monster createMonster(char type, Game game) {
         Monster newMonster = null;
-        if (type == 'g') {
-            newMonster = new Troll(game);
-        }
-        if (type == 'h') {
-            newMonster = new TX5(game);
+        switch (type) {
+            case 'g': newMonster = new Troll(game); break;
+            case 'h': newMonster = new TX5(game); break;
         }
         return newMonster;
     }

@@ -9,6 +9,7 @@ import matachi.mapeditor.grid.Grid;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 import src.utility.PropertiesLoader;
 
@@ -33,9 +34,9 @@ public class GameEngine extends GameGrid {
     private GGBackground background;
     private ArrayList<File> sortedFile;
     protected PacActor pacActor;
-    private ArrayList<Monster> trolls;
-    private ArrayList<Monster> tx5s;
     private Grid grid;
+    private final String[] monsterCharacters = {"g", "h"};
+    private final String[] itemCharacters = {"c", "d", "e", "i", "j", "k", "l"};
     private ArrayList<Monster> monsters;
     private ArrayList<Item> pills;
     private ArrayList<Item> goldPieces;
@@ -45,7 +46,6 @@ public class GameEngine extends GameGrid {
     private PortalPair yellowPortals;
     private PortalPair darkGoldPortals;
     private PortalPair darkGrayPortals;
-
     private Properties properties;
     private final int SPEED_DOWN = 3;
 
@@ -96,34 +96,17 @@ public class GameEngine extends GameGrid {
 
     // TODO: using map to set up actor locations instead of property file
     private void setupActorLocations() {
-        Location location;
-        Location pacLocation;
-        Location trollLocation;
-        Location tx5Location;
-        int num_trolls = 0;
-        int num_tx5s = 0;
-
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
-                location = new Location(x, y);
-                char a = grid.getTile(x, y);
-                if (a == 'f') {
-                    pacLocation = location;
-                    addActor(pacActor, pacLocation);
+                Location location = new Location(x, y);
+                char type = grid.getTile(x, y);
+                if (type == 'f') {
+                    addActor(pacActor, location);
                 }
-                if (a == 'g') {
-                    Monster newTroll = MonsterFactory.getInstance().createMonster(a, game);
-                    trolls.add(newTroll);
-                    trollLocation = location;
-                    addActor(trolls.get(num_trolls), trollLocation, Location.NORTH);
-                    num_trolls ++;
-                }
-                if (a == 'h') {
-                    Monster newTX5 = MonsterFactory.getInstance().createMonster(a, game);
-                    tx5s.add(newTX5);
-                    tx5Location = location;
-                    addActor(tx5s.get(num_tx5s), tx5Location, Location.NORTH);
-                    num_tx5s ++;
+                if (Arrays.asList(monsterCharacters).contains(Character.toString(type))) {
+                    Monster newMonster = MonsterFactory.getInstance().createMonster(type, game);
+                    addActor(newMonster, location, Location.NORTH);
+                    monsters.add(newMonster);
                 }
             }
         }
@@ -132,44 +115,22 @@ public class GameEngine extends GameGrid {
 
     // TODO: use map to set up pill and items locations instead of property file
     private void setupPillAndItemsLocations() {
-        Item item;
-        Location location;
         for (int y = 0; y < nbVertCells; y++) {
             for (int x = 0; x < nbHorzCells; x++) {
-                location = new Location(x, y);
-                char a = grid.getTile(x, y);
-                if (a == 'c') {
-                    pills.add(new Item(location));
-                }
-                if (a == 'd') {
-                    item = new Item(ItemType.GOLD_PIECE.getImage(), location);
-                    goldPieces.add(item);
+                Location location = new Location(x, y);
+                char type = grid.getTile(x, y);
+                if (Arrays.asList(itemCharacters).contains(Character.toString(type))) {
+                    Item item = ItemFactory.getInstance().createItem(type, location);
                     addActor(item, location);
-                }
-                if (a == 'e') {
-                    item = new Item(ItemType.ICE_CUBE.getImage(), location);
-                    iceCubes.add(item);
-                    addActor(item, location);
-                }
-                if (a == 'i'){
-                    item = new Item(ItemType.WHITE_PORTAL.getImage(), location);
-                    whitePortals.addPortal(item);
-                    addActor(item, location);
-                }
-                if (a == 'j'){
-                    item = new Item(ItemType.YELLOW_PORTAL.getImage(), location);
-                    yellowPortals.addPortal(item);
-                    addActor(item, location);
-                }
-                if (a == 'k'){
-                    item = new Item(ItemType.DARK_GOLD_PORTAL.getImage(), location);
-                    darkGoldPortals.addPortal(item);
-                    addActor(item, location);
-                }
-                if (a == 'l'){
-                    item = new Item(ItemType.DARK_GRAY_PORTAL.getImage(), location);
-                    darkGrayPortals.addPortal(item);
-                    addActor(item, location);
+                    switch (type) {
+                        case 'c': pills.add(item); break;
+                        case 'd': goldPieces.add(item); break;
+                        case 'e': iceCubes.add(item); break;
+                        case 'i': whitePortals.addPortal(item); break;
+                        case 'j': yellowPortals.addPortal(item); break;
+                        case 'k': darkGoldPortals.addPortal(item); break;
+                        case 'l': darkGrayPortals.addPortal(item); break;
+                    }
                 }
             }
         }
@@ -285,15 +246,10 @@ public class GameEngine extends GameGrid {
         game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
         pacActor = new PacActor(game, grid, isAuto);
         setupPacActorAttributes();
-        trolls = new ArrayList<>();
-        tx5s = new ArrayList<>();
         monsters = new ArrayList<>();
         setupActorLocations();
-        monsters.addAll(trolls);
-        monsters.addAll(tx5s);
         setupMonsterAttributes();
         game.addPacMan(pacActor);
         game.addMonsters(monsters);
     }
-
 }
