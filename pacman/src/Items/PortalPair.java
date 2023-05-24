@@ -1,4 +1,4 @@
-package src;
+package src.Items;
 
 // TODO: Added PortalPair class for adding portals to map,
 //  and also additional functions for level checking purposes

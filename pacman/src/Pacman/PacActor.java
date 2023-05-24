@@ -1,16 +1,14 @@
 // PacActor.java
 // Used for PacMan
-package src;
+package src.Pacman;
 
 import ch.aplu.jgamegrid.*;
 import matachi.mapeditor.grid.Grid;
+import src.Game;
+import src.Items.ItemType;
 
 import java.awt.event.KeyEvent;
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 
 public class PacActor extends MovableActor implements GGKeyRepeatListener {
   private int idSprite = 0;

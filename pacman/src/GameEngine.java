@@ -11,6 +11,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+
+import src.Items.Item;
+import src.Items.ItemFactory;
+import src.Items.PortalPair;
+import src.Monsters.Monster;
+import src.Monsters.MonsterFactory;
+import src.Pacman.PacActor;
 import src.utility.PropertiesLoader;
 
 /**

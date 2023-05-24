@@ -1,7 +1,9 @@
-package src;
+package src.Pacman;
 
 import ch.aplu.jgamegrid.Location;
 import matachi.mapeditor.grid.Grid;
+import src.Game;
+import src.Items.Item;
 
 import java.util.*;
 

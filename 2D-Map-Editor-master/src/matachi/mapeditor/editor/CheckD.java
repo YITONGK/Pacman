@@ -2,10 +2,7 @@ package matachi.mapeditor.editor;
 
 import ch.aplu.jgamegrid.Location;
 import matachi.mapeditor.grid.Grid;
-import src.BFS;
-import src.Item;
-import src.ItemType;
-import src.PortalPair;
+import src.Pacman.BFS;
 
 import java.io.File;
 import java.util.ArrayList;

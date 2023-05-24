@@ -1,8 +1,11 @@
 // Monster.java
 // Used for PacMan
-package src;
+package src.Monsters;
 
 import ch.aplu.jgamegrid.*;
+import src.Game;
+import src.Pacman.MovableActor;
+
 import java.util.*;
 
 public abstract class Monster extends MovableActor {

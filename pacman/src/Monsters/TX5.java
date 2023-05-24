@@ -1,6 +1,7 @@
-package src;
+package src.Monsters;
 
 import ch.aplu.jgamegrid.Location;
+import src.Game;
 
 public class TX5 extends Monster{
     public TX5(Game game) {

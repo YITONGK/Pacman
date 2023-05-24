@@ -1,6 +1,7 @@
-package src;
+package src.Monsters;
 
 import ch.aplu.jgamegrid.Location;
+import src.Game;
 
 public class Troll extends Monster{
     public Troll(Game game) {

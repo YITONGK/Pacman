@@ -3,6 +3,11 @@
 package src;
 
 import ch.aplu.jgamegrid.*;
+import src.Items.Item;
+import src.Items.ItemType;
+import src.Items.PortalPair;
+import src.Monsters.Monster;
+import src.Pacman.PacActor;
 import src.utility.GameCallback;
 import java.util.ArrayList;
 
@@ -35,7 +40,7 @@ public class Game {
   }
 
 
-  public void removeItem(ItemType type,Location location){
+  public void removeItem(ItemType type, Location location){
     if(type == ItemType.GOLD_PIECE){
       for (Item item : goldPieces){
         if (location.getX() == item.getLocation().getX() && location.getY() == item.getLocation().getY()) {

@@ -1,11 +1,7 @@
 package matachi.mapeditor.editor;
 
 import ch.aplu.jgamegrid.Location;
-import com.sun.source.tree.BreakTree;
 import matachi.mapeditor.grid.Grid;
-import src.Item;
-import src.ItemType;
-import src.PortalPair;
 
 import java.io.File;
 import java.util.ArrayList;

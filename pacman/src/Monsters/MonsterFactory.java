@@ -1,6 +1,6 @@
-package src;
+package src.Monsters;
 
-import matachi.mapeditor.editor.GameChecker;
+import src.Game;
 
 public class MonsterFactory {
     private static MonsterFactory instance;

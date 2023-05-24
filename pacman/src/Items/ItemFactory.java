@@ -1,4 +1,4 @@
-package src;
+package src.Items;
 
 import ch.aplu.jgamegrid.Location;
 
