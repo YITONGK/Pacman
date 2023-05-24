@@ -7,17 +7,17 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CheckC extends LevelCheckComponent{
-    public String checkLevel(File file, Grid model) {
+    public String checkLevel(File file, Grid grid) {
         int countGold = 0;
         int countPill = 0;
         char tileChar;
         Location location;
-        String output = "";
+        String log = "";
         ArrayList<Location> pills = new ArrayList<>();
         ArrayList<Location> golds = new ArrayList<>();
-        for (int y = 0; y < model.getHeight(); y++){
-            for (int x = 0; x < model.getWidth(); x++){
-                tileChar = model.getTile(x, y);
+        for (int y = 0; y < grid.getHeight(); y++){
+            for (int x = 0; x < grid.getWidth(); x++){
+                tileChar = grid.getTile(x, y);
                 location = new Location(x, y);
                 if (tileChar == 'c') {
                     countPill++;
@@ -29,9 +29,10 @@ public class CheckC extends LevelCheckComponent{
                 }
             }
         }
+        // number of pills and golds should exceed 2 in total
         if (countPill + countGold < 2){
-            output = "Level " + file.getName() + ".xml – less than 2 Gold and Pill\n";
+            log = "Level " + file.getName() + ".xml – less than 2 Gold and Pill\n";
         }
-        return output;
+        return log;
     }
 }

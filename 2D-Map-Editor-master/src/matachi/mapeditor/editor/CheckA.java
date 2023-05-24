@@ -9,15 +9,15 @@ import java.util.ArrayList;
 public class CheckA extends LevelCheckComponent{
 
     @Override
-    public String checkLevel(File file, Grid model) {
+    public String checkLevel(File file, Grid grid) {
         int countPacMan = 0;
         ArrayList<Location> pacmans = new ArrayList<>();
         char tileChar;
         Location location;
-        String output = "";
-        for (int y = 0; y < model.getHeight(); y++) {
-            for (int x = 0; x < model.getWidth(); x++) {
-                tileChar = model.getTile(x, y);
+        String log = "";
+        for (int y = 0; y < grid.getHeight(); y++) {
+            for (int x = 0; x < grid.getWidth(); x++) {
+                tileChar = grid.getTile(x, y);
                 location = new Location(x, y);
                 if (tileChar == 'f') {
                     countPacMan++;
@@ -25,16 +25,17 @@ public class CheckA extends LevelCheckComponent{
                 }
             }
         }
-        // level check 4a
+        // no pacman start point
         if (countPacMan == 0){
-            output =  "Level " + file.getName() + ".xml - no start for PacMan\n";
-            return output;
+            log =  "Level " + file.getName() + ".xml - no start for PacMan\n";
+            return log;
         }
+        // multiple pacman start points
         if (countPacMan > 1){
-            output = "Level " + file.getName() + ".xml - more than one start for Pacman: " + locationListToString(pacmans) + "\n";
-            return output;
+            log = "Level " + file.getName() + ".xml - more than one start for Pacman: " + locationListToString(pacmans) + "\n";
+            return log;
         }
-        return output;
+        return log;
     }
 
 }

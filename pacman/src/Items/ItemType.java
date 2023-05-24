@@ -22,8 +22,8 @@ public enum ItemType {
 
     public String getImage(){
         return switch (this) {
-            case GOLD_PIECE -> "sprites/gold.png";
-            case ICE_CUBE -> "sprites/ice.png";
+            case GOLD_PIECE -> "2D-Map-Editor-master/data/d_goldTile.png";
+            case ICE_CUBE -> "2D-Map-Editor-master/data/e_iceTile.png";
             case WHITE_PORTAL -> "2D-Map-Editor-master/data/i_portalWhiteTile.png";
             case YELLOW_PORTAL -> "2D-Map-Editor-master/data/j_portalYellowTile.png";
             case DARK_GOLD_PORTAL -> "2D-Map-Editor-master/data/k_portalDarkGoldTile.png";

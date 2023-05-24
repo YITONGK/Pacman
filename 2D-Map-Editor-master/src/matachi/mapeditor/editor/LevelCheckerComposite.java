@@ -3,8 +3,6 @@ package matachi.mapeditor.editor;
 import matachi.mapeditor.grid.Grid;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +32,12 @@ public class LevelCheckerComposite extends LevelCheckComponent{
         levelCheckers.remove(levelChecker);
     }
 
-    public String checkLevel(File file, Grid model) {
-        String output = "";
+    public String checkLevel(File file, Grid grid) {
+        String log = "";
         for (LevelCheckComponent checker: levelCheckers) {
-            output = output + checker.checkLevel(file, model);
+            log = log + checker.checkLevel(file, grid);
         }
-        return output;
+        return log;
     }
 }
 

@@ -15,21 +15,21 @@ public class CheckD extends LevelCheckComponent{
     private final static int[] delta_x = {-1, 0, 1, 0};
     private final static int[] delta_y = {0, 1, 0, -1};
     private final static char[] portals = {'i', 'j', 'k', 'l'};
-    public String checkLevel(File file, Grid model) {
-        int countPacMan = 0;
+    public String checkLevel(File file, Grid grid) {
         char tileChar;
-        Location location;
-        String output = "";
-        ArrayList<Location> pacmans = new ArrayList<>();
+        Location pacLocation = null;
+        String log = "";
+        if (new CheckA().checkLevel(file, grid).length() != 0 || new CheckB().checkLevel(file, grid).length() != 0) {
+            return log;
+        }
         ArrayList<Location> pills = new ArrayList<>();
         ArrayList<Location> golds = new ArrayList<>();
-        for (int y = 0; y < model.getHeight(); y++){
-            for (int x = 0; x < model.getWidth(); x++){
-                tileChar = model.getTile(x, y);
-                location = new Location(x, y);
+        for (int y = 0; y < grid.getHeight(); y++){
+            for (int x = 0; x < grid.getWidth(); x++){
+                tileChar = grid.getTile(x, y);
+                Location location = new Location(x, y);
                 if (tileChar == 'f') {
-                    countPacMan++;
-                    pacmans.add(location);
+                    pacLocation = location;
                 }
                 else if (tileChar == 'c') {
                     pills.add(location);
@@ -39,41 +39,36 @@ public class CheckD extends LevelCheckComponent{
                 }
             }
         }
-        if (countPacMan != 1) {
-            return output;
-        }
-        else {
-            boolean allPillsAccessible = true;
-            boolean allGoldsAccessible = true;
-            ArrayList<Location> inaccessiblePills = new ArrayList<>();
-            ArrayList<Location> inaccessibleGolds = new ArrayList<>();
-            boolean[][] accessibleLocations = bfs(model, pacmans.get(0));
-            // loop the item list to see whether every item is at a reachable location
-            for (Location l : pills) {
-                if (!accessibleLocations[l.x][l.y]) {
-                    allPillsAccessible = false;
-                    inaccessiblePills.add(l);
-                }
-            }
-            for (Location l : golds) {
-                if (!accessibleLocations[l.x][l.y]) {
-                    allGoldsAccessible = false;
-                    inaccessibleGolds.add(l);
-                }
-            }
-            // print log and return false
-            if (!allPillsAccessible || !allGoldsAccessible) {
-                if (!allPillsAccessible) {
-                    output = "Level " + file.getName() + ".xml - Pill not accessible: " +
-                            locationListToString(inaccessiblePills) + "\n";
-                }
-                if (!allGoldsAccessible) {
-                    output = output + "Level " + file.getName() + ".xml - Gold not accessible: " +
-                            locationListToString(inaccessibleGolds) + "\n";
-                }
+        boolean allPillsAccessible = true;
+        boolean allGoldsAccessible = true;
+        ArrayList<Location> inaccessiblePills = new ArrayList<>();
+        ArrayList<Location> inaccessibleGolds = new ArrayList<>();
+        boolean[][] accessibleLocations = bfs(grid, pacLocation);
+        // loop the item list to see whether every item is at a reachable location
+        for (Location l : pills) {
+            if (!accessibleLocations[l.x][l.y]) {
+                allPillsAccessible = false;
+                inaccessiblePills.add(l);
             }
         }
-        return output;
+        for (Location l : golds) {
+            if (!accessibleLocations[l.x][l.y]) {
+                allGoldsAccessible = false;
+                inaccessibleGolds.add(l);
+            }
+        }
+        // write log and return null
+        if (!allPillsAccessible || !allGoldsAccessible) {
+            if (!allPillsAccessible) {
+                log = "Level " + file.getName() + ".xml - Pill not accessible: " +
+                        locationListToString(inaccessiblePills) + "\n";
+            }
+            if (!allGoldsAccessible) {
+                log = log + "Level " + file.getName() + ".xml - Gold not accessible: " +
+                        locationListToString(inaccessibleGolds) + "\n";
+            }
+        }
+        return log;
     }
 
     // return a 2D boolean array
