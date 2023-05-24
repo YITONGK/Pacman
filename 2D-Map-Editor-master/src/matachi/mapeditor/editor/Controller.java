@@ -65,7 +65,6 @@ public class Controller implements ActionListener, GUIInformation {
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
 
-	//TODO: Added an arraylist of folder models
 	private ArrayList<File> sortedFile = new ArrayList<>();
 	public File currFile = null;
 	FileWriter fileWriter = null;
@@ -75,11 +74,6 @@ public class Controller implements ActionListener, GUIInformation {
 	 */
 	public Controller() {
 		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
-//		levelChecker = new LevelCheckerComposite();
-//		levelChecker.addLevelChecker(new CheckA());
-//		levelChecker.addLevelChecker(new CheckB());
-//		levelChecker.addLevelChecker(new CheckC());
-//		levelChecker.addLevelChecker(new CheckD());
 //		try {
 //            fileWriter = new FileWriter(new File("log.txt"));
 //        } catch (IOException ex) {
@@ -89,18 +83,11 @@ public class Controller implements ActionListener, GUIInformation {
 
 	public void init(int width, int height) {
 		this.tiles = TileManager.getTilesFromFolder("2D-Map-Editor-master/data/");
-		// Used for when editor is started with a map as argument
-
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
-		// Used for when editor is started with a folder as argument
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);
-
-		grid = new GridView(this, camera, tiles); // Every tile is
-													// 30x30 pixels
-
+		grid = new GridView(this, camera, tiles);
 		this.view = new View(this, camera, grid, tiles);
-
 	}
 
 	public Grid getModel() {
@@ -124,7 +111,7 @@ public class Controller implements ActionListener, GUIInformation {
 		} else if (e.getActionCommand().equals("save")) {
 			saveFile();
 		} else if (e.getActionCommand().equals("load")) {
-			loadFile();
+			loadFile(null);
 		} else if (e.getActionCommand().equals("update")) {
 			updateGrid(gridWith, gridHeight);
 		} else if (e.getActionCommand().equals("start_game")) {
@@ -132,38 +119,16 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
+	/**
+	 * Test mode action
+	 */
 	public void startUp(String path) {
 		if (path == null) {
-			loadFile();
+			loadFile(null);
 		} else {
 			loadFile(path);
 		}
-
 	}
-
-	public void updateGrid(int width, int height) {
-		view.close();
-		init(width, height);
-		view.setSize(width, height);
-	}
-
-	DocumentListener updateSizeFields = new DocumentListener() {
-
-		public void changedUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-
-		public void removeUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-
-		public void insertUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-	};
 
 	private void saveFile() {
 
@@ -235,81 +200,46 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-	// No argument: user select file or directory
-	public Grid loadFile() {
-		SAXBuilder builder = new SAXBuilder();
-		try {
-			JFileChooser chooser = new JFileChooser();
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			File selectedFile;
-			BufferedReader in;
-			FileReader reader = null;
-			File workingDirectory = new File(System.getProperty("user.dir"));
-			chooser.setCurrentDirectory(workingDirectory);
-
-			int returnVal = chooser.showOpenDialog(null);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				selectedFile = chooser.getSelectedFile();
-				if (selectedFile.isFile()){
-					currFile = selectedFile;
-					model = processFile(currFile, builder);
-					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
-					if (log.length() != 0) {
-						fileWriter = new FileWriter(new File("log.txt"));
-						currFile = null;
-						model = null;
-						writeString(log);
-						return null;
-					}
-				}
-				else if (selectedFile.isDirectory()){
-					if (processFolder(selectedFile, builder) != null) {
-						currFile = sortedFile.get(0);
-						model = processFile(currFile, builder);
-						String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
-						if (log.length() != 0) {
-							fileWriter = new FileWriter(new File("log.txt"));
-							currFile = null;
-							model = null;
-							writeString(log);
-							return null;
-						}
-					} else {
-						model = getModel();
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return model;
-	}
-
-	// with argument: skip user selecting
 	public Grid loadFile(String pathStr) {
-		File mPath = new File(pathStr);
+		File mPath;
 		SAXBuilder builder = new SAXBuilder();
 		try {
+			if (!pathStr.equals(null)) {
+				mPath = new File(pathStr);
+			} else {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				chooser.setCurrentDirectory(workingDirectory);
+
+				int returnVal = chooser.showOpenDialog(null);
+				if (returnVal != JFileChooser.APPROVE_OPTION) {
+					return null;
+				}
+				mPath = chooser.getSelectedFile();
+			}
 			if (mPath.isFile()){
 				currFile = mPath;
+				String logName = currFile.getName();
 				model = processFile(currFile, builder);
 				String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 				if (log.length() != 0) {
-					fileWriter = new FileWriter(new File("log.txt"));
 					currFile = null;
 					model = null;
+					fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
 					writeString(log);
 					return null;
 				}
 			} else if (mPath.isDirectory()){
 				if (processFolder(mPath, builder) != null) {
 					currFile = sortedFile.get(0);
+					String logName = currFile.getName();
 					model = processFile(currFile, builder);
 					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 					if (log.length() != 0) {
-						fileWriter = new FileWriter(new File("log.txt"));
 						currFile = null;
 						model = null;
+						fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
 						writeString(log);
 						return null;
 					}
@@ -322,6 +252,32 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 		return model;
 	}
+
+
+	public void updateGrid(int width, int height) {
+		view.close();
+		init(width, height);
+		view.setSize(width, height);
+	}
+
+	DocumentListener updateSizeFields = new DocumentListener() {
+
+		public void changedUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+
+		public void removeUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+	};
+
 
 	public Grid loadNextFile() {
 		int i = sortedFile.indexOf(currFile);
