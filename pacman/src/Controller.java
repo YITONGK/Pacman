@@ -337,7 +337,6 @@ public class Controller implements ActionListener, GUIInformation {
 		return modelCopy;
 	}
 
-
 	public void updateGrid(int width, int height) {
 		view.close();
 		init(width, height);
