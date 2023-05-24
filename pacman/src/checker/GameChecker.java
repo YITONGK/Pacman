@@ -73,8 +73,8 @@ public class GameChecker {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                String conflictFiles = nameHashMap.get(key).stream().collect(Collectors.joining(".xml; "));
-                writeString("Game " + folder.getName() + " – multiple maps at same level: " + conflictFiles + ".xml");
+                String conflictFiles = nameHashMap.get(key).stream().collect(Collectors.joining("; "));
+                writeString("Game " + folder.getName() + " – multiple maps at same level: " + conflictFiles);
             }
         }
         boolean status = startsWithUniqueNumbers && countValidFiles >= 1;

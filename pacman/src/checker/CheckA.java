@@ -25,12 +25,12 @@ public class CheckA extends LevelCheckComponent{
         }
         // no pacman start point
         if (countPacMan == 0){
-            log =  "Level " + file.getName() + ".xml - no start for PacMan\n";
+            log =  "Level " + file.getName() + " - no start for PacMan\n";
             return log;
         }
         // multiple pacman start points
         if (countPacMan > 1){
-            log = "Level " + file.getName() + ".xml - more than one start for Pacman: " + locationListToString(pacmans) + "\n";
+            log = "Level " + file.getName() + " - more than one start for Pacman: " + locationListToString(pacmans) + "\n";
             return log;
         }
         return log;

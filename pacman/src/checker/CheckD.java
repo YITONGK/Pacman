@@ -59,11 +59,11 @@ public class CheckD extends LevelCheckComponent{
         // write log and return null
         if (!allPillsAccessible || !allGoldsAccessible) {
             if (!allPillsAccessible) {
-                log = "Level " + file.getName() + ".xml - Pill not accessible: " +
+                log = "Level " + file.getName() + " - Pill not accessible: " +
                         locationListToString(inaccessiblePills) + "\n";
             }
             if (!allGoldsAccessible) {
-                log = log + "Level " + file.getName() + ".xml - Gold not accessible: " +
+                log = log + "Level " + file.getName() + " - Gold not accessible: " +
                         locationListToString(inaccessibleGolds) + "\n";
             }
         }

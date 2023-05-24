@@ -30,7 +30,7 @@ public class CheckC extends LevelCheckComponent{
         }
         // number of pills and golds should exceed 2 in total
         if (countPill + countGold < 2){
-            log = "Level " + file.getName() + ".xml – less than 2 Gold and Pill\n";
+            log = "Level " + file.getName() + " – less than 2 Gold and Pill\n";
         }
         return log;
     }
