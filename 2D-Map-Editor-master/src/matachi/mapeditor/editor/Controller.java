@@ -120,7 +120,7 @@ public class Controller implements ActionListener, GUIInformation {
 	}
 
 	/**
-	 * Test mode action
+	 * Test mode action.
 	 */
 	public void startUp(String path) {
 		if (path == null) {
@@ -204,7 +204,7 @@ public class Controller implements ActionListener, GUIInformation {
 		File mPath;
 		SAXBuilder builder = new SAXBuilder();
 		try {
-			if (!pathStr.equals(null)) {
+			if (!(pathStr == null)) {
 				mPath = new File(pathStr);
 			} else {
 				JFileChooser chooser = new JFileChooser();
@@ -225,7 +225,6 @@ public class Controller implements ActionListener, GUIInformation {
 				String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 				if (log.length() != 0) {
 					currFile = null;
-					model = null;
 					fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
 					writeString(log);
 					return null;
@@ -238,13 +237,13 @@ public class Controller implements ActionListener, GUIInformation {
 					String log = LevelCheckerComposite.getInstance().checkLevel(currFile, model);
 					if (log.length() != 0) {
 						currFile = null;
-						model = null;
 						fileWriter = new FileWriter(new File(logName + "_ErrorMapLog.txt"));
 						writeString(log);
 						return null;
 					}
 				} else {
 					model = getModel();
+					return null;
 				}
 			}
 		} catch (Exception e) {
@@ -253,32 +252,9 @@ public class Controller implements ActionListener, GUIInformation {
 		return model;
 	}
 
-
-	public void updateGrid(int width, int height) {
-		view.close();
-		init(width, height);
-		view.setSize(width, height);
-	}
-
-	DocumentListener updateSizeFields = new DocumentListener() {
-
-		public void changedUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-
-		public void removeUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-
-		public void insertUpdate(DocumentEvent e) {
-			gridWith = view.getWidth();
-			gridHeight = view.getHeight();
-		}
-	};
-
-
+	/**
+	 * Return a grid of the next file in the sorted file list.
+	 */
 	public Grid loadNextFile() {
 		int i = sortedFile.indexOf(currFile);
 		if ((i + 1) < sortedFile.size()) {
@@ -290,7 +266,7 @@ public class Controller implements ActionListener, GUIInformation {
 	}
 
 	/**
-	 * NEWLY ADDED: Function to process folder
+	 * Return a sorted arraylist of files that meets the requirement.
 	 */
 	private ArrayList<File> processFolder(File folder, SAXBuilder builder){
 
@@ -312,74 +288,20 @@ public class Controller implements ActionListener, GUIInformation {
 		return sortedFile;
 	}
 
-//	/**
-//	 * NEWLY ADDED: Function to check if folder is valid (section 2.2.4). Checks following:
-//	 * 1. at least one correctly named map file in the folder
-//	 * 2. the sequence of map files well-defined, where only one map file named with a particular number.
-//	 */
-//	private ArrayList<File> gameChecker(File folder){
-//		ArrayList<File> mapFiles = new ArrayList<File>();
-//		File[] files = folder.listFiles();
-//		HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
-//		char firstChar;
-//		int nameNum, countValidFiles = 0;
-//		boolean startsWithUniqueNumbers = true;
-//
-//		// Folder must contain contents to be valid
-//		if (files != null){
-//			for (int i = 0; i < files.length; i++){
-//				// We only use folder contents which are files
-//				if (files[i].isFile()){
-//					firstChar = files[i].getName().charAt(0);
-//					if (Character.isDigit(firstChar)){
-//						nameNum = Character.getNumericValue(firstChar);
-//						// If a particular number has not been used for a map file name
-//						if (!nameHashMap.containsKey(nameNum)) {
-//							ArrayList<String> names = new ArrayList<>();
-//							names.add(files[i].getName());
-//							nameHashMap.put(nameNum, names);
-//							// Add any valid map files to our arraylist
-//							mapFiles.add(files[i]);
-//						}
-//						else {
-//							nameHashMap.get(nameNum).add(files[i].getName());
-//						}
-//						countValidFiles++;
-//					}
-//				}
-//			}
-//		}
-//		if (countValidFiles == 0){
-//			// TODO: print error to log (e.g., [Game foldername – no maps found])
-//		}
-//		for (Integer key: nameHashMap.keySet()){
-//			if (nameHashMap.get(key).size() > 1){
-//				startsWithUniqueNumbers = false;
-//				// TODO: print error to log (e.g., [Game foldername – multiple maps at same level: 6level.xml; 6_map.xml; 6also.xml])
-//			}
-//		}
-//		boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
-//		if (!status) {
-//			return null;
-//		}
-//		return mapFiles;
-//	}
 
 	/**
-	 * NEWLY ADDED: Function to process file
+	 * Return a grid from a selected file.
 	 */
 	private Grid processFile(File selectedFile, SAXBuilder builder){
 		this.currFile = selectedFile;
 		Document document;
-		// TODO: Make a deep copy and return
 		Grid modelCopy = new GridModel(gridWith, gridHeight, tiles.get(0).getCharacter());
 
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
-//				System.out.println("Filename: " + selectedFile.getName());
+				System.out.println("Filename: " + selectedFile.getName());
 				Element rootNode = document.getRootElement();
-
 				List sizeList = rootNode.getChildren("size");
 				Element sizeElem = (Element) sizeList.get(0);
 				int height = Integer.parseInt(sizeElem
@@ -429,7 +351,6 @@ public class Controller implements ActionListener, GUIInformation {
 						modelCopy.setTile(x, y, tileNr);
 					}
 				}
-				String mapString = model.getMapAsString();
 				grid.redrawGrid();
 			}
 		}
@@ -438,6 +359,31 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 		return modelCopy;
 	}
+
+
+	public void updateGrid(int width, int height) {
+		view.close();
+		init(width, height);
+		view.setSize(width, height);
+	}
+
+	DocumentListener updateSizeFields = new DocumentListener() {
+
+		public void changedUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+
+		public void removeUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+
+		public void insertUpdate(DocumentEvent e) {
+			gridWith = view.getWidth();
+			gridHeight = view.getHeight();
+		}
+	};
 
 	/**
 	 * {@inheritDoc}
