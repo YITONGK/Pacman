@@ -261,6 +261,9 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
+	public void edit() {
+		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
+	}
 
 	/**
 	 * Return a sorted arraylist of files that meets the requirement.

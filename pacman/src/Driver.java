@@ -1,7 +1,7 @@
 package src;
 
 public class Driver {
-    public static final String DEFAULT_GAME_MAP_PATH = "pacman/TestFolder";
+    public static final String DEFAULT_GAME_MAP_PATH = "pacman/GameFolder";
     public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test4.properties";
 
     /**

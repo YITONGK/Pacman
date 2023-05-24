@@ -5,6 +5,7 @@ package src;
 import ch.aplu.jgamegrid.*;
 import src.grid.Grid;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -157,6 +158,8 @@ public class GameEngine extends GameGrid {
             } else {
                 bg.setPaintColor(Color.yellow);
                 title = "YOU WIN";
+                controller.edit();
+                return;
             }
         }
         setTitle(title);
