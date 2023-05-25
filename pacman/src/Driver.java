@@ -12,7 +12,6 @@ public class Driver {
         if (args.length > 0) {
             gameMapPath = args[0];
         }
-        Controller controller = new Controller(gameMapPath);
-        new GameEngine(DEFAULT_PROPERTIES_PATH, controller);
+        new GameEngine(DEFAULT_PROPERTIES_PATH, gameMapPath);
     }
 }

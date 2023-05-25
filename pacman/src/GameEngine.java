@@ -47,11 +47,11 @@ public class GameEngine extends GameGrid {
     private Properties properties;
     private final int SPEED_DOWN = 2;
 
-    public GameEngine(String propertiesPath, Controller controller) {
+    public GameEngine(String propertiesPath, String gameMapPath) {
         // Setup game engine
         super(nbHorzCells, nbVertCells, cellSize, isNavigation);
         this.properties = PropertiesLoader.loadPropertiesFile(propertiesPath);
-        this.controller = controller;
+        controller = new Controller(gameMapPath);
         grid = controller.getGrid();
         if (grid != null) {
             seed = Integer.parseInt(properties.getProperty("seed"));
