@@ -144,23 +144,25 @@ public class GameEngine extends GameGrid {
         if (game.isLost()) {
             bg.setPaintColor(Color.red);
             title = "GAME OVER";
+            setTitle(title);
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
             boolean hasNext = controller.nextLevel();
-            grid = controller.getGrid();
-            if (grid != null) {
-                removeAllActors();
-                this.game = new Game(nbHorzCells, nbVertCells);
-                setUpAll();
-                this.background = getBg();
-                drawGrid();
-                runGame();
-            } else if (!hasNext){
+            if (hasNext) {
+                grid = controller.getGrid();
+                if (grid != null){
+                    removeAllActors();
+                    this.game = new Game(nbHorzCells, nbVertCells);
+                    setUpAll();
+                    this.background = getBg();
+                    drawGrid();
+                    runGame();
+                }
+            } else{
                 bg.setPaintColor(Color.yellow);
                 title = "YOU WIN";
+                setTitle(title);
                 controller.edit();
-                return;
-            } else {
                 return;
             }
         }
