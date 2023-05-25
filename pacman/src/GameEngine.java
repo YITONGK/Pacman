@@ -163,7 +163,6 @@ public class GameEngine extends GameGrid {
                 title = "YOU WIN";
                 setTitle(title);
                 controller.edit();
-                return;
             }
         }
         setTitle(title);
