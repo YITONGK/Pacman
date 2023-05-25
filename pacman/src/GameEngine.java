@@ -45,7 +45,7 @@ public class GameEngine extends GameGrid {
     private PortalPair darkGoldPortals;
     private PortalPair darkGrayPortals;
     private Properties properties;
-    private final int SPEED_DOWN = 2;
+    private final int SPEED_DOWN = 200;
 
     public GameEngine(String propertiesPath, String gameMapPath) {
         // Setup game engine
@@ -146,6 +146,8 @@ public class GameEngine extends GameGrid {
             title = "GAME OVER";
             setTitle(title);
             addActor(new Actor("sprites/explosion3.gif"), loc);
+            setTitle(title);
+            game.getGameCallback().endOfGame(title);
         } else if (game.isWin()) {
             boolean hasNext = controller.nextLevel();
             if (hasNext) {
@@ -163,10 +165,10 @@ public class GameEngine extends GameGrid {
                 title = "YOU WIN";
                 setTitle(title);
                 controller.edit();
+                setTitle(title);
+                game.getGameCallback().endOfGame(title);
             }
         }
-        setTitle(title);
-        game.getGameCallback().endOfGame(title);
         doPause();
     }
 
