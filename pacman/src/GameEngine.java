@@ -46,7 +46,7 @@ public class GameEngine extends GameGrid {
     private PortalPair darkGoldPortals;
     private PortalPair darkGrayPortals;
     private Properties properties;
-    private final int SPEED_DOWN = 200;
+    private final int SPEED_DOWN = 2;
 
     public GameEngine(String propertiesPath, String gameMapPath) {
         // Setup game engine
