@@ -146,7 +146,7 @@ public class GameEngine extends GameGrid {
             title = "GAME OVER";
             addActor(new Actor("sprites/explosion3.gif"), loc);
         } else if (game.isWin()) {
-            controller.nextLevel();
+            boolean hasNext = controller.nextLevel();
             grid = controller.getGrid();
             if (grid != null) {
                 removeAllActors();
@@ -155,10 +155,12 @@ public class GameEngine extends GameGrid {
                 this.background = getBg();
                 drawGrid();
                 runGame();
-            } else {
+            } else if (!hasNext){
                 bg.setPaintColor(Color.yellow);
                 title = "YOU WIN";
                 controller.edit();
+                return;
+            } else {
                 return;
             }
         }

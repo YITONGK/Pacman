@@ -72,7 +72,7 @@ public class Controller implements ActionListener, GUIInformation {
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);
-		grid = new GridView(this, camera, tiles);
+		this.grid = new GridView(this, camera, tiles);
 		this.view = new View(this, camera, grid, tiles);
 	}
 
@@ -121,7 +121,7 @@ public class Controller implements ActionListener, GUIInformation {
 	}
 
 	private void loadFileAndLogErrors(File file) {
-		loadFile(file.getPath());
+		model = loadFile(file.getPath());
 		String log = LevelCheckerComposite.getInstance().checkLevel(file, model);
 		if (!log.isEmpty()) {
 			writeErrorLog(file.getName() + "_ErrorMapLog.txt", log);
@@ -253,12 +253,14 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-	public void nextLevel() {
+	public boolean nextLevel() {
 		File nextFile = loadNextFile();
 		if (nextFile != null) {
 			processEntry(nextFile);
+			return true;
 		} else {
 			gameGrid = null;
+			return false;
 		}
 	}
 
@@ -290,7 +292,6 @@ public class Controller implements ActionListener, GUIInformation {
 	private Grid processFile(File selectedFile){
 		SAXBuilder builder = new SAXBuilder();
 		Document document;
-		Grid modelCopy = new GridModel(gridWith, gridHeight, tiles.get(0).getCharacter());
 		try {
 			if (selectedFile.canRead() && selectedFile.exists()) {
 				document = (Document) builder.build(selectedFile);
@@ -302,7 +303,6 @@ public class Controller implements ActionListener, GUIInformation {
 				int width = Integer
 						.parseInt(sizeElem.getChildText("width"));
 				updateGrid(width, height);
-
 				List rows = rootNode.getChildren("row");
 				for (int y = 0; y < rows.size(); y++) {
 					Element cellsElem = (Element) rows.get(y);
@@ -326,7 +326,6 @@ public class Controller implements ActionListener, GUIInformation {
 							case "PortalDarkGrayTile" -> tileNr = 'l';
 						}
 						model.setTile(x, y, tileNr);
-						modelCopy.setTile(x, y, tileNr);
 					}
 				}
 				grid.redrawGrid();

@@ -64,7 +64,7 @@ public class GameChecker {
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            writeString("Game " + folder.getName() + " – no maps found");
+            writeString("GameFolder " + folder.getName() + " – no maps found");
         }
         for (Integer key: nameHashMap.keySet()){
             if (nameHashMap.get(key).size() > 1){
@@ -75,7 +75,7 @@ public class GameChecker {
                     ex.printStackTrace();
                 }
                 String conflictFiles = nameHashMap.get(key).stream().collect(Collectors.joining("; "));
-                writeString("Game " + folder.getName() + " – multiple maps at same level: " + conflictFiles);
+                writeString("GameFolder " + folder.getName() + " – multiple maps at same level: " + conflictFiles);
             }
         }
         boolean status = startsWithUniqueNumbers && countValidFiles >= 1;
