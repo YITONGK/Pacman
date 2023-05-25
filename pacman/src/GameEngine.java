@@ -45,7 +45,7 @@ public class GameEngine extends GameGrid {
     private PortalPair darkGoldPortals;
     private PortalPair darkGrayPortals;
     private Properties properties;
-    private final int SPEED_DOWN = 200;
+    private final int SPEED_DOWN = 2;
 
     public GameEngine(String propertiesPath, String gameMapPath) {
         // Setup game engine
@@ -159,6 +159,11 @@ public class GameEngine extends GameGrid {
                     this.background = getBg();
                     drawGrid();
                     runGame();
+                } else {
+                    bg.setPaintColor(Color.red);
+                    title = "ERROR MAP";
+                    setTitle(title);
+                    game.getGameCallback().endOfGame(title);
                 }
             } else{
                 bg.setPaintColor(Color.yellow);
