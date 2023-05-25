@@ -206,10 +206,10 @@ public class GameEngine extends GameGrid {
         pills = new ArrayList<>();
         goldPieces = new ArrayList<>();
         iceCubes = new ArrayList<>();
-        whitePortals = new PortalPair();
-        yellowPortals = new PortalPair();
-        darkGoldPortals = new PortalPair();
-        darkGrayPortals = new PortalPair();
+        whitePortals = ItemFactory.getInstance().createPortalPair();
+        yellowPortals = ItemFactory.getInstance().createPortalPair();
+        darkGoldPortals = ItemFactory.getInstance().createPortalPair();
+        darkGrayPortals = ItemFactory.getInstance().createPortalPair();
         setupPillAndItemsLocations();
         game.addItems(pills, goldPieces, iceCubes, whitePortals, yellowPortals, darkGrayPortals, darkGoldPortals);
         pacActor = new PacActor(game, grid, isAuto);

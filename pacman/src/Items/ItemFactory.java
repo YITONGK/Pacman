@@ -33,4 +33,11 @@ public class ItemFactory {
             default -> null;
         };
     }
+
+    /**
+     * Create new PortalPair object
+     */
+    public PortalPair createPortalPair(){
+        return new PortalPair();
+    }
 }
