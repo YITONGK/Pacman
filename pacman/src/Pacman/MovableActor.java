@@ -16,19 +16,25 @@ public abstract class MovableActor extends Actor {
     protected int seed;
     protected Random randomiser = new Random();
 
-    // this constructor is for pacActor
+    /**
+     * constructor for pacActor
+     */
     public MovableActor(Game game) {
         super(true, "sprites/pacpix.gif", nbSprites);
         this.game = game;
     }
 
-    // this constructor is for monsters
+    /**
+     * constructor for monsters
+     */
     public MovableActor(Game game, MonsterType type){
         super("sprites/" + type.getImageName());
         this.game = game;
     }
 
-    // check whether a location is out of bound or is a wall, if so, that location is prohibited to step on
+    /**
+     * check whether a location is out of bound or is a wall, if so, that location is prohibited to step on
+     */
     public boolean canMove(Location location) {
         if ( isWall(location)|| location.getX() >= game.getNumHorzCells()
                 || location.getX() < 0 || location.getY() >= game.getNumVertCells() || location.getY() < 0)
@@ -37,7 +43,9 @@ public abstract class MovableActor extends Actor {
             return true;
     }
 
-    // check whether a location is a wall
+    /**
+     * check whether a location is a wall
+     */
     public boolean isWall(Location location) {
         Color c = getBackground().getColor(location);
         if (c.equals(Color.gray)) {
@@ -52,14 +60,18 @@ public abstract class MovableActor extends Actor {
         randomiser.setSeed(seed);
     }
 
-    // add a location to recently visited list, but the list will only keep records of ten recent visited locations
+    /**
+     * add a location to recently visited list, but the list will only keep records of ten recent visited locations
+     */
     public void addVisitedList(Location location) {
         visitedList.add(location);
         if (visitedList.size() == listLength)
             visitedList.remove(0);
     }
 
-    // check whether a location has been recently visited
+    /**
+     * check whether a location has been recently visited
+     */
     public boolean isVisited(Location location) {
         for (Location loc : visitedList)
             if (loc.equals(location))

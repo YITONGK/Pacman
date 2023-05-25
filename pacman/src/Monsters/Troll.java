@@ -8,7 +8,9 @@ public class Troll extends Monster{
         super(game, MonsterType.Troll);
     }
 
-    // Troll implements random walk
+    /**
+     * Troll implements random walk
+     */
     public Location walkApproach() {
         return randomWalk();
     }

@@ -14,10 +14,15 @@ public class CheckD extends LevelCheckComponent{
     private final static int[] delta_x = {-1, 0, 1, 0};
     private final static int[] delta_y = {0, 1, 0, -1};
     private final static char[] portals = {'i', 'j', 'k', 'l'};
+    /**
+     * check whether all golds and pills are accessible
+     * if fails the check, return error log as a string
+     */
     public String checkLevel(File file, Grid grid) {
         char tileChar;
         Location pacLocation = null;
         String log = "";
+        // if either checkA or checkB fails, unnecessary to check accessibility
         if (new CheckA().checkLevel(file, grid).length() != 0 || new CheckB().checkLevel(file, grid).length() != 0) {
             return log;
         }
@@ -56,7 +61,7 @@ public class CheckD extends LevelCheckComponent{
                 inaccessibleGolds.add(l);
             }
         }
-        // write log and return null
+        // write log and return
         if (!allPillsAccessible || !allGoldsAccessible) {
             if (!allPillsAccessible) {
                 log = "Level " + file.getName() + " - Pill not accessible: " +
@@ -70,7 +75,10 @@ public class CheckD extends LevelCheckComponent{
         return log;
     }
 
-    // return a 2D boolean array
+    /**
+     * given a start point and map, the breadth first search will return a 2 D boolean array indicating
+     * all the reachable locations on the map from the start point
+     */
     public static boolean[][] bfs(Grid grid, Location start) {
         boolean[][] visited = new boolean[Horz][Vert];
         List<Location> reachableLocations = new ArrayList<>();
@@ -85,10 +93,11 @@ public class CheckD extends LevelCheckComponent{
             for (int i = 0; i < 4; i ++) {
                 int newX = current.x + delta_x[i];
                 int newY = current.y + delta_y[i];
-                // skip if the new location is out of bounds or visited or is a wall
+                // skip if the new location is out of bounds or visited
                 if ((newX < 0 || newX >= Horz) || (newY < 0 || newY >= Vert)) {
                     continue;
                 }
+                // skip if the new location is a wall
                 char cell = grid.getTile(newX, newY);
                 if (visited[newX][newY] || cell == 'b') {
                     continue;

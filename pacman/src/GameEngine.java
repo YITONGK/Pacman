@@ -5,7 +5,6 @@ package src;
 import ch.aplu.jgamegrid.*;
 import src.grid.Grid;
 import java.awt.*;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -94,6 +93,7 @@ public class GameEngine extends GameGrid {
                 if (type == 'f') {
                     addActor(pacActor, location);
                 }
+                // use monster factory to create troll and tx5, and any other monsters if more are coming in the future
                 if (Arrays.asList(monsterCharacters).contains(Character.toString(type))) {
                     Monster newMonster = MonsterFactory.getInstance().createMonster(type, game);
                     addActor(newMonster, location, Location.NORTH);
@@ -108,6 +108,7 @@ public class GameEngine extends GameGrid {
             for (int x = 0; x < nbHorzCells; x++) {
                 Location location = new Location(x, y);
                 char type = grid.getTile(x, y);
+                // use item factory to create pills, golds, ice cubes, and portals
                 if (Arrays.asList(itemCharacters).contains(Character.toString(type))) {
                     Item item = ItemFactory.getInstance().createItem(type, location);
                     addActor(item, location);
@@ -139,7 +140,6 @@ public class GameEngine extends GameGrid {
             monster.setStopMoving(true);
         }
         pacActor.removeSelf();
-
         String title = "";
         if (game.isLost()) {
             bg.setPaintColor(Color.red);
@@ -179,7 +179,6 @@ public class GameEngine extends GameGrid {
                 location = new Location(x, y);
                 cellValue = grid.getTile(x, y);
                 bg.fillCell(location, Color.gray);
-                // TODO: changed value
                 if (cellValue != 'b') {
                     bg.fillCell(location, Color.lightGray);
                 }
@@ -198,6 +197,9 @@ public class GameEngine extends GameGrid {
         }
     }
 
+    /**
+     * used to set up all actors and map entities
+     */
     public void setUpAll() {
         pills = new ArrayList<>();
         goldPieces = new ArrayList<>();

@@ -6,6 +6,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CheckC extends LevelCheckComponent{
+    /**
+     * check whether there are more than 2 golds and pills in total
+     * if fails the check, return error log as a string
+     */
     public String checkLevel(File file, Grid grid) {
         int countGold = 0;
         int countPill = 0;

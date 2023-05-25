@@ -6,6 +6,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CheckA extends LevelCheckComponent{
+    /**
+     * check whether there is exactly one starting point for pacman
+     * if fails the check, return error log as a string
+     */
     @Override
     public String checkLevel(File file, Grid grid) {
         int countPacMan = 0;

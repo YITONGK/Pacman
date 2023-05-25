@@ -21,8 +21,10 @@ public class DirectedApproach implements MoveStrategy {
         items.addAll(game.getGoldPieces());
     }
 
-    // this method is used to choose the location which is closest to a remaining item
-    // will be used in auto move mode, to help pacman automatically choose next step
+    /**
+     * this method is used to choose the location which is closest to a remaining item
+     * will be used in auto move mode, to help pacman automatically choose next step
+     */
     private Location closestPillLocation(PacActor pacman) {
         int currentDistance = 1000;
         Location currentLocation = null;
@@ -40,31 +42,44 @@ public class DirectedApproach implements MoveStrategy {
         return currentLocation;
     }
 
+    /**
+     * implements the move method in moveStrategy interface
+     */
     public Location move(PacActor pacman, Grid grid) {
+        // if there is no target, get one, and generate a path to the target using breadth first search
         if (target == null || path.size() == 0) {
             target = closestPillLocation(pacman);
             path = bfs(pacman.getLocation(), target, grid);
+            path.remove(0); // remove the first element in the path arrayList because it is the start point
         }
-        Location next = path.remove(1);
+        // next location will be the first location of the path arrayList
+        Location next = path.remove(0);
         if (next.equals(target)) {
             target = null;
             path.clear();
         }
+        // set direction
         Location.CompassDirection compassDir = pacman.getLocation().get4CompassDirectionTo(next);
         pacman.setDirection(compassDir);
         return next;
     }
 
-    // return a path
+    /**
+     * Given the game grid, with a start point and target, breadth first search will return a path
+     * the path is an ArrayList of locations indicating the sequence of going from start to target
+     */
     public static List<Location> bfs(Location start, Location target, Grid grid) {
+        // this 2 D boolean array is used to record visited locations
         boolean[][] visited = new boolean[Horz][Vert];
         visited[start.x][start.y] = true;
         Queue<Location> queue = new LinkedList<>();
         queue.add(start);
+        // this hashMap is used to record the parent location of a new visited location
         Map<Location, Location> parentMap = new HashMap<>();
         parentMap.put(start, null);
         while (!queue.isEmpty()) {
             Location current = queue.poll();
+            // reach the target, construct a path and return
             if (current.equals(target)) {
                 return constructPath(parentMap, current);
             }
@@ -72,10 +87,11 @@ public class DirectedApproach implements MoveStrategy {
             for (int i = 0; i < 4; i ++) {
                 int newX = current.x + delta_x[i];
                 int newY = current.y + delta_y[i];
-                // skip if the new location is out of bounds or visited or is a wall
+                // skip if the new location is out of bounds
                 if ((newX < 0 || newX >= Horz) || (newY < 0 || newY >= Vert)) {
                     continue;
                 }
+                // skip if the new location is visited or is a wall
                 char cell = grid.getTile(newX, newY);
                 if (visited[newX][newY] || cell == 'b') {
                     continue;
@@ -84,6 +100,7 @@ public class DirectedApproach implements MoveStrategy {
                 Location newLocation = new Location(newX, newY);
                 queue.add(newLocation);
                 boolean isPortal = false;
+                // if the newLocation is a portal, add its corresponding portal to the queue
                 for (char c: portals) {
                     if (cell == c) {
                         isPortal = true;
@@ -106,6 +123,9 @@ public class DirectedApproach implements MoveStrategy {
         return null;
     }
 
+    /**
+     * back track the target, keep adding its parent location to the array list until reaching the starting point
+     */
     public static List<Location> constructPath(Map<Location, Location> parentMap, Location target) {
         ArrayList<Location> path = new ArrayList<>();
         Location current = target;

@@ -9,6 +9,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CheckB extends LevelCheckComponent{
+    /**
+     * check whether all portals are valid,
+     * if fails the check, return error log as a string
+     */
     public String checkLevel(File file, Grid grid) {
         char tileChar;
         Location location;

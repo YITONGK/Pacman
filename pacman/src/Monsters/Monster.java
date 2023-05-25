@@ -17,7 +17,7 @@ public abstract class Monster extends MovableActor {
   }
 
   public void act() {
-    // either stopMoving or isFrozen is true, monsters stand still, this act() method will not reach the walk() method
+    // if stopMoving is true, monsters stand still, this act() method will not reach the walk() method
     if (stopMoving) {
       return;
     }
@@ -30,10 +30,14 @@ public abstract class Monster extends MovableActor {
     }
   }
 
-  // Return the next move of the monster
+  /**
+   * Return the next move of the monster
+   */
   public abstract Location walkApproach();
 
-  // The monsters walk according to different states
+  /**
+   * The monsters walk according to different states
+   */
   public void walk() {
     Location next = walkApproach();
     setLocation(next);
@@ -46,8 +50,11 @@ public abstract class Monster extends MovableActor {
     game.getGameCallback().monsterLocationChanged(this);
   }
 
-  // Randomly turn left or right, and turn back to the original direction and go forward or turn the other side if
-  // hits maze wall
+
+  /**
+   * Randomly turn left or right, and turn back to the original direction and go forward or turn the other side if
+   * hits maze wall
+   */
   public Location randomWalk() {
     double oldDirection = getDirection();
     int sign = randomiser.nextDouble() < 0.5 ? 1 : -1;

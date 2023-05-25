@@ -22,6 +22,7 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     this.grid = grid;
     this.isAuto = isAuto;
     if (isAuto) {
+      // instantiate moveStrategy with the current required walk approach
       moveStrategy = new DirectedApproach(game);
     }
   }
@@ -44,7 +45,9 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     this.game.getGameCallback().pacManLocationChanged(getLocation(), score, nbPills);
   }
 
-  // this method is used for user keyboard input to control pacman when pacman is not in auto mode
+  /**
+   * this method is used for user keyboard input to control pacman when pacman is not in auto mode
+   */
   public void keyRepeated(int keyCode) {
     Location pacNewLocation;
     if (isAuto) {
@@ -82,7 +85,9 @@ public class PacActor extends MovableActor implements GGKeyRepeatListener {
     }
   }
 
-  // check whether the current location pacman stands in has an item, if so, different items have different effects
+  /**
+   * check whether the current location pacman stands in has an item, if so, different items have different effects
+   */
   private void eatPill(Location location) {
     Color c = getBackground().getColor(location);
     // If pill was eaten

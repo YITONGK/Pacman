@@ -9,7 +9,9 @@ public class TX5 extends Monster{
         stopMoving(5);
     }
 
-    // TX5 determines the direction to pacActor and try to move in that direction. Otherwise, random walk.
+    /**
+     * TX5 determines the direction to pacActor and try to move in that direction. Otherwise, random walk.
+     */
     public Location walkApproach() {
         Location pacLocation = game.getPacActor().getLocation();
         Location.CompassDirection compassDir = getLocation().get4CompassDirectionTo(pacLocation);

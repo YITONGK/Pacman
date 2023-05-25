@@ -17,6 +17,9 @@ public class LevelCheckerComposite extends LevelCheckComponent{
         addLevelChecker(new CheckD());
     }
 
+    /**
+     * singleton level checker global access point
+     */
     public static LevelCheckerComposite getInstance(){
         if (instance == null) {
             instance = new LevelCheckerComposite();
@@ -24,13 +27,23 @@ public class LevelCheckerComposite extends LevelCheckComponent{
         return instance;
     }
 
+    /**
+     * allow easy addition of new level check requirement
+     */
     public void addLevelChecker(LevelCheckComponent levelChecker) {
         levelCheckers.add(levelChecker);
     }
+
+    /**
+     * allow deletion of current checker outside the class, though it has not been used so far
+     */
     public void removeLevelChecker(LevelCheckComponent levelChecker) {
         levelCheckers.remove(levelChecker);
     }
 
+    /**
+     * work as a composite pattern, check all the checkers in composite
+     */
     public String checkLevel(File file, Grid grid) {
         String log = "";
         for (LevelCheckComponent checker: levelCheckers) {

@@ -78,6 +78,9 @@ public class Game {
     this.darkGrayPortals = darkGrayPortals;
   }
 
+  /**
+   * when an actor move onto a portal, it should be transferred immediately onto another corresponding portal location
+   */
   public Location moveActorThroughPortal(Actor actor){
     Location moveTo;
     if ((moveTo = whitePortals.moveActor(actor)) != null){

@@ -13,6 +13,9 @@ public class GameChecker {
     private GameChecker() {
     }
 
+    /**
+     * singleton game checker global access point
+     */
     public static GameChecker getInstance(){
         if (instance == null) {
             instance = new GameChecker();
@@ -21,7 +24,7 @@ public class GameChecker {
     }
 
     /**
-     * NEWLY ADDED: Function to check if folder is valid (section 2.2.4). Checks following:
+     * Function to check if folder is valid (section 2.2.4). Checks following:
      * 1. at least one correctly named map file in the folder
      * 2. the sequence of map files well-defined, where only one map file named with a particular number.
      */
@@ -31,7 +34,6 @@ public class GameChecker {
         HashMap<Integer, ArrayList<String>> nameHashMap = new HashMap<>();
         int mapNum, countValidFiles = 0;
         boolean startsWithUniqueNumbers = true;
-
         // Folder must contain contents to be valid
         if (files != null){
             for (int i = 0; i < files.length; i++){
@@ -56,7 +58,6 @@ public class GameChecker {
                 }
             }
         }
-
         if (countValidFiles == 0){
             try {
                 fileWriter = new FileWriter(new File("GameCheckErrorLog.txt"));
@@ -84,6 +85,9 @@ public class GameChecker {
         return mapFiles;
     }
 
+    /**
+     * get the beginning numbers of a filename, return as a string
+     */
     public String getStartNum(String filename) {
         String startNum = "";
         char c;

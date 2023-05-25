@@ -8,6 +8,9 @@ public class MonsterFactory {
     private MonsterFactory(){
     }
 
+    /**
+     * singleton monster factory global access point here
+     */
     public static MonsterFactory getInstance(){
         if (instance == null) {
             instance = new MonsterFactory();
@@ -15,12 +18,14 @@ public class MonsterFactory {
         return instance;
     }
 
+    /**
+     * create new monster according to the given type and return
+     */
     public Monster createMonster(char type, Game game) {
-        Monster newMonster = null;
-        switch (type) {
-            case 'g': newMonster = new Troll(game); break;
-            case 'h': newMonster = new TX5(game); break;
-        }
-        return newMonster;
+        return switch (type) {
+            case 'g' -> new Troll(game);
+            case 'h' -> new TX5(game);
+            default -> null;
+        };
     }
 }
