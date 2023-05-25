@@ -41,7 +41,7 @@ public class FileHandler{
     /**
      * Save the current map.
      */
-    public void saveFile(Grid model) {
+    public File saveFile(Grid model) {
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "xml files", "xml");
@@ -95,6 +95,7 @@ public class FileHandler{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return new File(chooser.getSelectedFile().getPath());
     }
 
     /**

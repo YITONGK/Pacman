@@ -86,7 +86,13 @@ public class Controller implements ActionListener, GUIInformation {
 			case "flipGrid":
 				break;
 			case "save":
-				fileHandler.saveFile(model);
+				File savedFile = fileHandler.saveFile(model);
+				model = fileHandler.loadFile(savedFile.getPath(), model);
+				grid.redrawGrid();
+				String log = LevelCheckerComposite.getInstance().checkLevel(savedFile, model);
+				if (!log.isEmpty()) {
+					fileHandler.writeErrorLog(savedFile.getName(), log);
+				}
 				break;
 			case "load":
 				File selectedFile = fileHandler.selectFile(model);
