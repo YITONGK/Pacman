@@ -142,6 +142,7 @@ public class Controller implements ActionListener, GUIInformation {
 	}
 
 	public void edit() {
+		view.close();
 		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
 	}
 

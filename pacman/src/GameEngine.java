@@ -148,6 +148,7 @@ public class GameEngine extends GameGrid {
             addActor(new Actor("sprites/explosion3.gif"), loc);
             setTitle(title);
             game.getGameCallback().endOfGame(title);
+            controller.edit();
         } else if (game.isWin()) {
             boolean hasNext = controller.nextLevel();
             if (hasNext) {
