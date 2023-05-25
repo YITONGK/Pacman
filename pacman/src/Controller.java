@@ -28,13 +28,13 @@ public class Controller implements ActionListener, GUIInformation {
 	/**
 	 * The model of the map editor.
 	 */
-	private Grid model;
+	private Grid model = null;
 	private Grid gameGrid = null;
-	private Tile selectedTile;
-	private Camera camera;
+	private Tile selectedTile = null;
+	private Camera camera = null;
 	private List<Tile> tiles;
-	private GridView grid;
-	private View view;
+	private GridView grid = null;
+	private View view = null;
 	private int gridWith = Constants.MAP_WIDTH;
 	private int gridHeight = Constants.MAP_HEIGHT;
 	private boolean isTest = false;
@@ -48,16 +48,25 @@ public class Controller implements ActionListener, GUIInformation {
 	public Controller(String arg) {
 
 		fileHandler = new FileHandler();
-		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
+
 		if (arg != null) {
 			File entry = new File(arg);
 			if (entry.isDirectory()) {
 				isTest = true;
+				this.tiles = TileManager.getTilesFromFolder("2D-Map-Editor-master/data/");
+				this.model = new GridModel(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, tiles.get(0).getCharacter());
+				this.camera = new GridCamera(model, Constants.GRID_WIDTH, Constants.GRID_HEIGHT);
+				this.grid = new GridView(this, camera, tiles);
+			} else {
+				init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
 			}
 			processEntry(entry);
 		}
 	}
 
+	/**
+	 * Set up a window.
+	 */
 	public void init(int width, int height) {
 		this.tiles = TileManager.getTilesFromFolder("2D-Map-Editor-master/data/");
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
@@ -106,6 +115,9 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
+	/**
+	 * Logic for processing a map or a folder.
+	 */
 	private void processEntry(File entry) {
 		if (entry.isFile()) {
 			loadFileAndLogErrors(entry);
@@ -117,6 +129,9 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
+	/**
+	 * Updates the model and perform level check.
+	 */
 	private void loadFileAndLogErrors(File file) {
 		model = fileHandler.loadFile(file.getPath(), model);
 		grid.redrawGrid();
@@ -129,25 +144,47 @@ public class Controller implements ActionListener, GUIInformation {
 		}
 	}
 
-
-	public boolean nextLevel() {
+	/**
+	 * Get the next map.
+	 */
+	public File nextLevel() {
 		File nextFile = fileHandler.loadNextFile();
 		if (nextFile != null) {
 			processEntry(nextFile);
-			return true;
+			return nextFile;
 		} else {
 			gameGrid = null;
-			return false;
+			return null;
 		}
 	}
 
+	/**
+	 * Edit mode with no current map.
+	 */
 	public void edit() {
-		view.close();
+		if (view != null) {
+			view.close();
+		}
 		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
 	}
 
+	/**
+	 * Edit mode on a map.
+	 */
+	public void editCurrMap(File editMap) {
+		if (view != null) {
+			view.close();
+		}
+		init(Constants.MAP_WIDTH, Constants.MAP_HEIGHT);
+		model = fileHandler.loadFile(editMap.getPath(), model);
+		grid.redrawGrid();
+	}
+
+
 	public void updateGrid(int width, int height) {
-		view.close();
+		if (view != null) {
+			view.close();
+		}
 		init(width, height);
 		view.setSize(width, height);
 	}
@@ -174,5 +211,4 @@ public class Controller implements ActionListener, GUIInformation {
 	public Tile getSelectedTile() {
 		return selectedTile;
 	}
-
 }

@@ -5,6 +5,7 @@ package src;
 import ch.aplu.jgamegrid.*;
 import src.grid.Grid;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -150,8 +151,8 @@ public class GameEngine extends GameGrid {
             game.getGameCallback().endOfGame(title);
             controller.edit();
         } else if (game.isWin()) {
-            boolean hasNext = controller.nextLevel();
-            if (hasNext) {
+            File nextFile = controller.nextLevel();
+            if (nextFile != null) {
                 grid = controller.getGrid();
                 if (grid != null){
                     removeAllActors();
@@ -164,6 +165,7 @@ public class GameEngine extends GameGrid {
                     bg.setPaintColor(Color.red);
                     title = "ERROR MAP";
                     setTitle(title);
+                    controller.editCurrMap(nextFile);
                     game.getGameCallback().endOfGame(title);
                     this.getFrame().dispose();
                 }
