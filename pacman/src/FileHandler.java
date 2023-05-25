@@ -1,7 +1,5 @@
 package src;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -10,17 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import src.editor.*;
 import src.checker.GameChecker;
-import src.checker.LevelCheckerComposite;
-import src.grid.Camera;
 import src.grid.Grid;
-import src.grid.GridCamera;
-import src.grid.GridModel;
-import src.grid.GridView;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -30,17 +20,16 @@ import org.jdom.output.XMLOutputter;
 
 public class FileHandler{
 
+    private String ERROR_STRING = "_ErrorMapLog.txt";
     private ArrayList<File> sortedFile = new ArrayList<>();
     public File currFile = null;
     FileWriter fileWriter = null;
 
-
     public FileHandler() {
     }
 
-
     public void writeErrorLog(String fileName, String log) {
-        fileName = fileName + "_ErrorMapLog.txt";
+        fileName = fileName + ERROR_STRING;
         try {
             fileWriter = new FileWriter(new File(fileName));
             writeString(log);

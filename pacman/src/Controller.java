@@ -3,29 +3,18 @@ package src;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import src.editor.*;
-import src.checker.GameChecker;
 import src.checker.LevelCheckerComposite;
 import src.grid.Camera;
 import src.grid.Grid;
 import src.grid.GridCamera;
 import src.grid.GridModel;
 import src.grid.GridView;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+
 
 /**
  * Controller of the application.
