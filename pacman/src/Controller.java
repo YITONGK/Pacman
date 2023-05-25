@@ -153,6 +153,7 @@ public class Controller implements ActionListener, GUIInformation {
 		int returnVal = chooser.showSaveDialog(null);
 		try {
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
+
 				Element level = new Element("level");
 				Document doc = new Document(level);
 				doc.setRootElement(level);
@@ -334,7 +335,7 @@ public class Controller implements ActionListener, GUIInformation {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return modelCopy;
+		return model;
 	}
 
 	public void updateGrid(int width, int height) {
