@@ -34,14 +34,13 @@ public class FileHandler{
     public File currFile = null;
     FileWriter fileWriter = null;
 
-    private FileCallback callback;
 
-    public FileHandler(FileCallback callback) {
-        this.callback = callback;
+    public FileHandler() {
     }
 
 
-    private void writeErrorLog(String fileName, String log) {
+    public void writeErrorLog(String fileName, String log) {
+        fileName = fileName + "_ErrorMapLog.txt";
         try {
             fileWriter = new FileWriter(new File(fileName));
             writeString(log);
@@ -53,7 +52,7 @@ public class FileHandler{
     /**
      * Save the current map.
      */
-    private void saveFile(Grid model) {
+    public void saveFile(Grid model) {
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(
                 "xml files", "xml");
@@ -168,7 +167,7 @@ public class FileHandler{
     /**
      * Return a sorted arraylist of files that meets the requirement.
      */
-    private ArrayList<File> processFolder(String folderPath){
+    public ArrayList<File> processFolder(String folderPath){
         File folder = new File(folderPath);
         ArrayList<File> mapFiles = GameChecker.getInstance().checkGame(folder);
         if (mapFiles == null){
@@ -199,7 +198,6 @@ public class FileHandler{
                         .getChildText("height"));
                 int width = Integer
                         .parseInt(sizeElem.getChildText("width"));
-                callback.updateGrid(width, height);
                 List rows = rootNode.getChildren("row");
                 for (int y = 0; y < rows.size(); y++) {
                     Element cellsElem = (Element) rows.get(y);
@@ -242,4 +240,3 @@ public class FileHandler{
         }
     }
 }
-
