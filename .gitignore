@@ -4,6 +4,9 @@
 out/
 dist/
 Log.txt
+2D-Map-Editor-master/
+pacman/Game/
+pacman/test/
 
 # Gradle and Maven with auto-import
 # When using Gradle or Maven with auto-import, you should exclude module files,

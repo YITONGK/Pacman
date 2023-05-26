@@ -7,8 +7,8 @@ public class Driver {
      * Starting point
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        String gameMapPath = null;
+    public static void main(String[] args) {
+        String gameMapPath = "";
         if (args.length > 0) {
             gameMapPath = args[0];
         }

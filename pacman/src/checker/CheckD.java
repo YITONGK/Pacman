@@ -79,7 +79,7 @@ public class CheckD extends LevelCheckComponent{
      * given a start point and map, the breadth first search will return a 2 D boolean array indicating
      * all the reachable locations on the map from the start point
      */
-    public static boolean[][] bfs(Grid grid, Location start) {
+    public boolean[][] bfs(Grid grid, Location start) {
         boolean[][] visited = new boolean[Horz][Vert];
         List<Location> reachableLocations = new ArrayList<>();
         Queue<Location> queue = new LinkedList<>();
