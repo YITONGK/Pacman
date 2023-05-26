@@ -39,8 +39,7 @@ public class Controller implements ActionListener, GUIInformation {
 	private int gridHeight = Constants.MAP_HEIGHT;
 	private boolean isTest = false;
 	private ArrayList<File> sortedFile = new ArrayList<>();
-
-	FileHandler fileHandler;
+	private FileHandler fileHandler;
 
 	/**
 	 * Construct the controller.

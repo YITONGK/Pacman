@@ -20,10 +20,10 @@ import org.jdom.output.XMLOutputter;
 
 public class FileHandler{
 
-    private String ERROR_STRING = "_ErrorMapLog.txt";
+    private final String ERROR_STRING = "_ErrorMapLog.txt";
     private ArrayList<File> sortedFile = new ArrayList<>();
     public File currFile = null;
-    FileWriter fileWriter = null;
+    public FileWriter fileWriter = null;
 
     public FileHandler() {
     }

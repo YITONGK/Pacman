@@ -41,3 +41,5 @@ pacman/test/
 # BlueJ files
 *.ctxt
 
+/2D-Map-Editor-master/
+/pacman/test/
