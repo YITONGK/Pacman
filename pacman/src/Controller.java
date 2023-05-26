@@ -122,9 +122,10 @@ public class Controller implements ActionListener, GUIInformation {
 			loadFileAndLogErrors(entry);
 		} else if (entry.isDirectory()) {
 			sortedFile = fileHandler.processFolder(entry.getPath());
-
 			if (sortedFile != null && !sortedFile.isEmpty()) {
 				loadFileAndLogErrors(sortedFile.get(0));
+			} else {
+				edit();
 			}
 		}
 	}
