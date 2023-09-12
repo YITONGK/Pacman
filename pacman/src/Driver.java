@@ -1,7 +1,7 @@
 package src;
 
 public class Driver {
-    public static final String DEFAULT_PROPERTIES_PATH = "pacman/properties/test.properties";
+    public static final String DEFAULT_PROPERTIES_PATH = "properties/test.properties";
 
     /**
      * Starting point
