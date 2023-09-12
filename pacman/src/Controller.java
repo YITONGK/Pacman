@@ -52,7 +52,7 @@ public class Controller implements ActionListener, GUIInformation {
 			File entry = new File(arg);
 			if (entry.isDirectory()) {
 				isTest = true;
-				this.tiles = TileManager.getTilesFromFolder("sprites/data/");
+				this.tiles = TileManager.getTilesFromFolder("pacman/sprites/data/");
 				this.model = new GridModel(Constants.MAP_WIDTH, Constants.MAP_HEIGHT, tiles.get(0).getCharacter());
 				this.camera = new GridCamera(model, Constants.GRID_WIDTH, Constants.GRID_HEIGHT);
 				this.grid = new GridView(this, camera, tiles);
@@ -67,7 +67,7 @@ public class Controller implements ActionListener, GUIInformation {
 	 * Set up a window.
 	 */
 	public void init(int width, int height) {
-		this.tiles = TileManager.getTilesFromFolder("sprites/data/");
+		this.tiles = TileManager.getTilesFromFolder("pacman/sprites/data/");
 		this.model = new GridModel(width, height, tiles.get(0).getCharacter());
 		this.camera = new GridCamera(model, Constants.GRID_WIDTH,
 				Constants.GRID_HEIGHT);

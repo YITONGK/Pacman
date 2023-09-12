@@ -19,12 +19,12 @@ public enum ItemType {
 
     public String getImage(){
         return switch (this) {
-            case GOLD_PIECE -> "sprites/data/d_goldTile.png";
-            case ICE_CUBE -> "sprites/data/e_iceTile.png";
-            case WHITE_PORTAL -> "sprites/data/i_portalWhiteTile.png";
-            case YELLOW_PORTAL -> "sprites/data/j_portalYellowTile.png";
-            case DARK_GOLD_PORTAL -> "sprites/data/k_portalDarkGoldTile.png";
-            case DARK_GRAY_PORTAL -> "sprites/data/l_portalDarkGrayTile.png";
+            case GOLD_PIECE -> "pacman/sprites/data/d_goldTile.png";
+            case ICE_CUBE -> "pacman/sprites/data/e_iceTile.png";
+            case WHITE_PORTAL -> "pacman/sprites/data/i_portalWhiteTile.png";
+            case YELLOW_PORTAL -> "pacman/sprites/data/j_portalYellowTile.png";
+            case DARK_GOLD_PORTAL -> "pacman/sprites/data/k_portalDarkGoldTile.png";
+            case DARK_GRAY_PORTAL -> "pacman/sprites/data/l_portalDarkGrayTile.png";
             default -> "";
         };
     }
